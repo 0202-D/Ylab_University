@@ -1,5 +1,6 @@
-package io.ylab.in.service;
+package io.ylab.service;
 
+import io.ylab.model.Action;
 import io.ylab.model.Transaction;
 import io.ylab.model.User;
 
@@ -14,4 +15,6 @@ public interface UserService {
     boolean credit(BigDecimal sum, User user,Transaction transaction);
 
     List<Transaction> history(User user);
+
+    List<Action> activity(User currentUser);
 }

@@ -1,5 +1,16 @@
 package io.ylab.model;
 
+/**
+ * Перечисления активности.
+ */
 public enum Activity {
-    ENTERED,EXITED,DEBIT,CREDIT,HISTORY,BALANCE,REGISTERED
+
+    ENTERED, //Пользователь зашел
+
+    EXITED,//Пользователь вышел
+    DEBIT,// Пользователь снял счет
+    CREDIT,// Пользователь пополнил счет
+    HISTORY,// Пользователь посмотрел историю транзакций
+    BALANCE,// Пользователь запросил баланс
+    REGISTERED //Пользователь зарегестрировался
 }

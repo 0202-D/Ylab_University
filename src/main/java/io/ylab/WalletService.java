@@ -1,13 +1,13 @@
 package io.ylab;
 
-import io.ylab.in.controller.AuthController;
-import io.ylab.in.controller.UserController;
-import io.ylab.in.dao.TransactionRepository;
-import io.ylab.in.dao.UserRepository;
-import io.ylab.in.service.AuthService;
-import io.ylab.in.service.AuthServiceImpl;
-import io.ylab.in.service.UserService;
-import io.ylab.in.service.UserServiceImpl;
+import io.ylab.controller.AuthController;
+import io.ylab.controller.UserController;
+import io.ylab.dao.TransactionRepository;
+import io.ylab.dao.UserRepository;
+import io.ylab.service.AuthService;
+import io.ylab.service.AuthServiceImpl;
+import io.ylab.service.UserService;
+import io.ylab.service.UserServiceImpl;
 import io.ylab.model.Transaction;
 import io.ylab.model.TransactionalType;
 import io.ylab.model.User;
@@ -26,7 +26,7 @@ public class WalletService {
         AuthService authService = new AuthServiceImpl(userRepository);
         AuthController authController = new AuthController(authService);
         TransactionRepository transactionRepository = new TransactionRepository();
-        UserService userService = new UserServiceImpl(transactionRepository);
+        UserService userService = new UserServiceImpl(transactionRepository, userRepository);
         User currentUser = null;
         UserController userController = new UserController(userService);
 
@@ -51,6 +51,9 @@ public class WalletService {
                     continue;
                 case (2):
                     currentUser = authController.authenticateUser();
+                    if (currentUser == null) {
+                        continue;
+                    }
                     break;
                 default:
                     System.out.println("Такой операции не существует");
@@ -105,6 +108,15 @@ public class WalletService {
                         }
                     case (4):
                         System.out.println(userController.history(currentUser));
+                        System.out.println("**********************");
+                        break;
+                    case (5):
+                        System.out.println(userController.activity(currentUser));
+                        System.out.println("**********************");
+                        break;
+                    default:
+                        System.out.println("Такой операции не существует");
+                        break;
                 }
             }
         }

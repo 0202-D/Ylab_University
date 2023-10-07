@@ -10,10 +10,26 @@ import java.util.concurrent.atomic.AtomicLong;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
+/**
+ * Класс, представляющий транзакцию.
+ */
 public class Transaction {
+    /**
+     * Уникальный идентификатор транзакции.
+     */
     AtomicLong id;
+    /**
+     * Тип транзакции (debit, credit).
+     */
     TransactionalType transactionalType;
+    /**
+     * Сумма транзакции.
+     */
     BigDecimal sum;
+    /**
+     * Пользователь, выполнивший транзакцию.
+     */
     User user;
 }

@@ -1,7 +1,7 @@
-package io.ylab.in.controller;
+package io.ylab.controller;
 
-import io.ylab.in.dao.UserRepository;
-import io.ylab.in.service.UserService;
+import io.ylab.service.UserService;
+import io.ylab.model.Action;
 import io.ylab.model.Transaction;
 import io.ylab.model.User;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class UserController {
         return userService.debit(sum, user, transaction);
     }
 
-    public boolean credit(BigDecimal sum, User user, Transaction transaction) {
+    public boolean  credit(BigDecimal sum, User user, Transaction transaction) {
         return userService.credit(sum, user, transaction);
     }
 
@@ -29,4 +29,7 @@ public class UserController {
         return userService.history(user);
     }
 
+    public List<Action> activity(User currentUser) {
+       return userService.activity(currentUser);
+    }
 }

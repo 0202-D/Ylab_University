@@ -1,6 +1,6 @@
-package io.ylab.in.controller;
+package io.ylab.controller;
 
-import io.ylab.in.service.AuthService;
+import io.ylab.service.AuthService;
 import io.ylab.model.User;
 import lombok.RequiredArgsConstructor;
 

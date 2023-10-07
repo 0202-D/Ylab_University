@@ -1,4 +1,4 @@
-package io.ylab.in.service;
+package io.ylab.service;
 
 import io.ylab.model.User;
 
