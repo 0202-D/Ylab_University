@@ -68,7 +68,9 @@ public class UserServiceImpl implements UserService {
         Optional<Transaction> transactionInRepo = transactionRepository.transactions
                 .stream().filter(el -> el.getId() == transaction.getId()).findFirst();
         if (transactionInRepo.isPresent()) {
-            throw new RuntimeException("Транзакция с таким id была проведена");
+            System.out.println("Транзакция с таким id была проведена");
+            System.out.println("**********************");
+            return true;
         }
         return false;
     }
