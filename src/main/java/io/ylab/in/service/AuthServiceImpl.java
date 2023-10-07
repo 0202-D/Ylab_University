@@ -28,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
             user1.setBalance(new BigDecimal(0));
             userRepository.list.add(user1);
             System.out.println("Вы зарегестрированы!");
+            System.out.println("**********************");
             return true;
         }
     }
@@ -39,14 +40,17 @@ public class AuthServiceImpl implements AuthService {
         Optional<User> user = userRepository.list.stream().filter(e->e.getUserName().equals(userName)).findFirst();
         if(user.isEmpty()){
             System.out.println("Такого пользователя не существует!");
+            System.out.println("**********************");
             return null;
         }
         if(!user.get().getPassword().equals(password)){
-            System.out.println("Такого пользователя не существует!");
+            System.out.println("Не верный пароль");
+            System.out.println("**********************");
             return null;
         }
 
         System.out.println("Вы вошли");
+        System.out.println("**********************");
         return user.get();
     }
     public static String [] passwordRequest(){
