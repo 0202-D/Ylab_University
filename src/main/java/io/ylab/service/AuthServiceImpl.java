@@ -1,7 +1,7 @@
 package io.ylab.service;
 
-import io.ylab.dao.transaction.action.ActionInMemoryRepository;
-import io.ylab.dao.transaction.user.UserInMemoryRepository;
+import io.ylab.dao.action.ActionInMemoryRepository;
+import io.ylab.dao.user.UserInMemoryRepository;
 import io.ylab.model.Action;
 import io.ylab.model.Activity;
 import io.ylab.model.User;

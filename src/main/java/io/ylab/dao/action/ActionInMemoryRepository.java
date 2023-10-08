@@ -1,4 +1,4 @@
-package io.ylab.dao.transaction.action;
+package io.ylab.dao.action;
 
 import io.ylab.model.Action;
 

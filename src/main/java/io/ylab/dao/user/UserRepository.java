@@ -1,4 +1,4 @@
-package io.ylab.dao.transaction.user;
+package io.ylab.dao.user;
 
 import io.ylab.model.User;
 

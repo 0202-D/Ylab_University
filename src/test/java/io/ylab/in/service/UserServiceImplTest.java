@@ -1,8 +1,8 @@
 package io.ylab.in.service;
 
 import io.ylab.dao.transaction.TransactionInMemoryRepository;
-import io.ylab.dao.transaction.action.ActionInMemoryRepository;
-import io.ylab.dao.transaction.user.UserInMemoryRepository;
+import io.ylab.dao.action.ActionInMemoryRepository;
+import io.ylab.dao.user.UserInMemoryRepository;
 import io.ylab.model.*;
 import io.ylab.service.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
