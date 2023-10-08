@@ -7,4 +7,8 @@ import java.util.List;
 
 public class TransactionRepository {
     public  List<Transaction> transactions = new ArrayList<>();
+
+    public void addTransaction(Transaction transaction){
+        transactions.add(transaction);
+    }
 }

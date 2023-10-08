@@ -41,11 +41,12 @@ public class WalletService {
                 choice = scanner.nextInt();
             } catch (Exception e) {
                 System.out.println("Не верный ввод");
-                break;
+                scanner.nextLine();
+                continue;
             }
             switch (choice) {
                 case (0):
-                    break;
+                    continue;
                 case (1):
                     authController.addUser();
                     continue;
@@ -57,7 +58,7 @@ public class WalletService {
                     break;
                 default:
                     System.out.println("Такой операции не существует");
-                    break;
+                    continue;
             }
             while (true) {
                 System.out.println("Добро пожаловать в ваш профиль!");

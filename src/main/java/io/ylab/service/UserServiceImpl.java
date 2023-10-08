@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     public void balance(User user) {
         System.out.println("Ваш баланс = " + user.getBalance());
         System.out.println("**********************");
-        userRepository.actions.add(new Action(user, Activity.BALANCE));
+        userRepository.addAction(new Action(user, Activity.BALANCE));
     }
     /**
      * Метод для списания средств с баланса пользователя.
@@ -47,8 +47,8 @@ public class UserServiceImpl implements UserService {
             return false;
         } else {
             user.setBalance(user.getBalance().subtract(sum));
-            transactionRepository.transactions.add(transaction);
-            userRepository.actions.add(new Action(user, Activity.DEBIT));
+            transactionRepository.addTransaction(transaction);
+            userRepository.addAction(new Action(user, Activity.DEBIT));
             return true;
         }
     }
