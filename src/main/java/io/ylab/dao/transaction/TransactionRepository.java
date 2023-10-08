@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface TransactionRepository {
-    List<Transaction> transactions = new ArrayList<>();
-
     void addTransaction(Transaction transaction);
 }
 
