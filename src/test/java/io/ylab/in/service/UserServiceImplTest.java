@@ -1,7 +1,8 @@
 package io.ylab.in.service;
 
-import io.ylab.dao.TransactionRepository;
-import io.ylab.dao.UserRepository;
+import io.ylab.dao.transaction.TransactionInMemoryRepository;
+import io.ylab.dao.transaction.action.ActionInMemoryRepository;
+import io.ylab.dao.transaction.user.UserInMemoryRepository;
 import io.ylab.model.*;
 import io.ylab.service.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,18 +23,21 @@ class UserServiceImplTest {
     private UserServiceImpl userService;
 
     @Mock
-    private TransactionRepository transactionRepository;
+    private TransactionInMemoryRepository transactionInMemoryRepository;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     @Mock
-    private UserRepository userRepository;
+    private UserInMemoryRepository userInMemoryRepository;
+
+    @Mock
+    private  ActionInMemoryRepository actionInMemoryRepository;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        userService = new UserServiceImpl(transactionRepository, userRepository);
-        userRepository.actions = new ArrayList<>();
+        userService = new UserServiceImpl(transactionInMemoryRepository,actionInMemoryRepository);
+        actionInMemoryRepository.actions = new ArrayList<>();
         System.setOut(new PrintStream(outputStreamCaptor));
-        transactionRepository.transactions = new ArrayList<>();
+        transactionInMemoryRepository.transactions = new ArrayList<>();
     }
 
     @Test
@@ -42,15 +46,15 @@ class UserServiceImplTest {
         userService.balance(user); // Вызываем метод balance
         assertEquals("Ваш баланс = 100\n**********************\n".replaceAll("\\r|\\n", ""),
                 outputStreamCaptor.toString().replaceAll("\\r|\\n", ""));
-        verify(userRepository).actions.add(new Action(user, Activity.BALANCE)); // Проверяем, что в UserRepository была добавлена соответствующая активность
+        verify(actionInMemoryRepository).actions.add(new Action(user, Activity.BALANCE)); // Проверяем, что в UserInMemoryRepository была добавлена соответствующая активность
     }
 
     @Test
     void testActivity() {
         User user = new User("Иван", "123", new BigDecimal("100.00"));
         Transaction transaction = new Transaction();
-        userRepository.actions.add(new Action(user, Activity.DEBIT));
-        userRepository.actions.add(new Action(user, Activity.CREDIT));
+        actionInMemoryRepository.actions.add(new Action(user, Activity.DEBIT));
+        actionInMemoryRepository.actions.add(new Action(user, Activity.CREDIT));
         Action unrelatedAction = new Action(new User(), Activity.DEBIT);
 
         assertEquals(2, userService.activity(user).size());
@@ -67,8 +71,8 @@ class UserServiceImplTest {
 
         assertFalse(userService.debit(sum, user, transaction));
         assertEquals(new BigDecimal("100.00"), user.getBalance());
-        assertFalse(transactionRepository.transactions.contains(transaction));
-        assertFalse(userRepository.actions.contains(new Action(user, Activity.DEBIT)));
+        assertFalse(transactionInMemoryRepository.transactions.contains(transaction));
+        assertFalse(actionInMemoryRepository.actions.contains(new Action(user, Activity.DEBIT)));
     }
     @Test
     void testCredit() {
@@ -78,8 +82,8 @@ class UserServiceImplTest {
 
         assertTrue(userService.credit(sum, user, transaction));
         assertEquals(new BigDecimal("150.00"), user.getBalance());
-        assertTrue(transactionRepository.transactions.contains(transaction));
-        assertTrue(userRepository.actions.contains(new Action(user, Activity.CREDIT)));
+        assertTrue(transactionInMemoryRepository.transactions.contains(transaction));
+        assertTrue(actionInMemoryRepository.actions.contains(new Action(user, Activity.CREDIT)));
     }
     @Test
     void testHistory() {
@@ -88,8 +92,8 @@ class UserServiceImplTest {
                 TransactionalType.DEBIT,new BigDecimal(100),user);
         Transaction transaction2 = new Transaction(new AtomicLong(1),
                 TransactionalType.DEBIT,new BigDecimal(100),user);
-        transactionRepository.transactions.add(transaction1);
-        transactionRepository.transactions.add(transaction2);
+        transactionInMemoryRepository.transactions.add(transaction1);
+        transactionInMemoryRepository.transactions.add(transaction2);
         Transaction unrelatedTransaction = new Transaction(new AtomicLong(1),
                 TransactionalType.DEBIT,new BigDecimal(100),user);
 
@@ -97,7 +101,7 @@ class UserServiceImplTest {
         assertTrue(userService.history(user).contains(transaction1));
         assertTrue(userService.history(user).contains(transaction2));
         assertFalse(userService.history(user).contains(unrelatedTransaction));
-        assertTrue(userRepository.actions.contains(new Action(user, Activity.HISTORY)));
+        assertTrue(actionInMemoryRepository.actions.contains(new Action(user, Activity.HISTORY)));
     }
 
 

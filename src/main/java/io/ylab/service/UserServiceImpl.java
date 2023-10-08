@@ -1,7 +1,7 @@
 package io.ylab.service;
 
-import io.ylab.dao.TransactionRepository;
-import io.ylab.dao.UserRepository;
+import io.ylab.dao.transaction.TransactionInMemoryRepository;
+import io.ylab.dao.transaction.action.ActionInMemoryRepository;
 import io.ylab.model.Action;
 import io.ylab.model.Activity;
 import io.ylab.model.Transaction;
@@ -18,9 +18,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final TransactionRepository transactionRepository;
+    private final TransactionInMemoryRepository transactionInMemoryRepository;
 
-    private final UserRepository userRepository;
+    private final ActionInMemoryRepository actionInMemoryRepository;
+
     /**
      * Метод для получения баланса пользователя.
      * @param user - объект пользователя, для которого нужно получить баланс.
@@ -29,7 +30,7 @@ public class UserServiceImpl implements UserService {
     public void balance(User user) {
         System.out.println("Ваш баланс = " + user.getBalance());
         System.out.println("**********************");
-        userRepository.addAction(new Action(user, Activity.BALANCE));
+        actionInMemoryRepository.addAction(new Action(user, Activity.BALANCE));
     }
     /**
      * Метод для списания средств с баланса пользователя.
@@ -47,8 +48,8 @@ public class UserServiceImpl implements UserService {
             return false;
         } else {
             user.setBalance(user.getBalance().subtract(sum));
-            transactionRepository.addTransaction(transaction);
-            userRepository.addAction(new Action(user, Activity.DEBIT));
+            transactionInMemoryRepository.addTransaction(transaction);
+            actionInMemoryRepository.addAction(new Action(user, Activity.DEBIT));
             return true;
         }
     }
@@ -65,7 +66,7 @@ public class UserServiceImpl implements UserService {
             System.out.println("**********************");
             return true;
         }
-        Optional<Transaction> transactionInRepo = transactionRepository.transactions
+        Optional<Transaction> transactionInRepo = transactionInMemoryRepository.transactions
                 .stream().filter(el -> el.getId() == transaction.getId()).findFirst();
         if (transactionInRepo.isPresent()) {
             System.out.println("Транзакция с таким id была проведена");
@@ -85,8 +86,8 @@ public class UserServiceImpl implements UserService {
     public boolean credit(BigDecimal sum, User user, Transaction transaction) {
         if (validate(sum, transaction)) return false;
         user.setBalance(user.getBalance().add(sum));
-        transactionRepository.transactions.add(transaction);
-        userRepository.actions.add(new Action(user, Activity.CREDIT));
+        transactionInMemoryRepository.transactions.add(transaction);
+        actionInMemoryRepository.actions.add(new Action(user, Activity.CREDIT));
         return true;
     }
     /**
@@ -96,10 +97,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<Transaction> history(User user) {
-        List<Transaction> transactions = transactionRepository.transactions
+        List<Transaction> transactions = transactionInMemoryRepository.transactions
                 .stream()
                 .filter(el -> el.getUser().getUserName().equals(user.getUserName())).toList();
-        userRepository.actions.add(new Action(user, Activity.HISTORY));
+        actionInMemoryRepository.actions.add(new Action(user, Activity.HISTORY));
         return transactions;
     }
     /**
@@ -109,7 +110,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<Action> activity(User currentUser) {
-        return userRepository.actions
+        return actionInMemoryRepository.actions
                 .stream().filter(el -> el.getUser().getUserName().equals(currentUser.getUserName()))
                 .collect(Collectors.toList());
     }

@@ -2,8 +2,9 @@ package io.ylab;
 
 import io.ylab.controller.AuthController;
 import io.ylab.controller.UserController;
-import io.ylab.dao.TransactionRepository;
-import io.ylab.dao.UserRepository;
+import io.ylab.dao.transaction.TransactionInMemoryRepository;
+import io.ylab.dao.transaction.action.ActionInMemoryRepository;
+import io.ylab.dao.transaction.user.UserInMemoryRepository;
 import io.ylab.service.AuthService;
 import io.ylab.service.AuthServiceImpl;
 import io.ylab.service.UserService;
@@ -22,11 +23,12 @@ import java.util.concurrent.atomic.AtomicLong;
 public class WalletService {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        UserRepository userRepository = new UserRepository();
-        AuthService authService = new AuthServiceImpl(userRepository);
+        UserInMemoryRepository userInMemoryRepository = new UserInMemoryRepository();
+        ActionInMemoryRepository actionInMemoryRepository = new ActionInMemoryRepository();
+        AuthService authService = new AuthServiceImpl(userInMemoryRepository,actionInMemoryRepository);
         AuthController authController = new AuthController(authService);
-        TransactionRepository transactionRepository = new TransactionRepository();
-        UserService userService = new UserServiceImpl(transactionRepository, userRepository);
+        TransactionInMemoryRepository transactionInMemoryRepository = new TransactionInMemoryRepository();
+        UserService userService = new UserServiceImpl(transactionInMemoryRepository, actionInMemoryRepository);
         User currentUser = null;
         UserController userController = new UserController(userService);
 
@@ -41,6 +43,7 @@ public class WalletService {
                 choice = scanner.nextInt();
             } catch (Exception e) {
                 System.out.println("Не верный ввод");
+                System.out.println("****************");
                 scanner.nextLine();
                 continue;
             }
