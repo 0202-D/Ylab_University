@@ -28,6 +28,9 @@ public class AuthServiceImpl implements AuthService {
      */
     public boolean addUser() {
         String[] nameAndPassword = passwordRequest();
+        if (nameAndPassword == null) {
+            return false;
+        }
         String userName = nameAndPassword[0];
         String password = nameAndPassword[1];
         Optional<User> user = userInMemoryRepository.users.stream().filter(e -> e.getUserName().equals(userName)).findFirst();
