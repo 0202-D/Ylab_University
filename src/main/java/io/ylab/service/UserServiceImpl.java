@@ -1,7 +1,7 @@
 package io.ylab.service;
 
-import io.ylab.dao.transaction.TransactionInMemoryRepository;
-import io.ylab.dao.action.ActionInMemoryRepository;
+import io.ylab.dao.action.ActionRepository;
+import io.ylab.dao.transaction.TransactionRepository;
 import io.ylab.model.Action;
 import io.ylab.model.Activity;
 import io.ylab.model.Transaction;
@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Реализация интерфейса UserService, предоставляющая функциональность работы с балансом пользователей и их транзакциями.
@@ -20,9 +19,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final TransactionInMemoryRepository transactionInMemoryRepository;
+    private final TransactionRepository transactionRepository;
 
-    private final ActionInMemoryRepository actionInMemoryRepository;
+    private final ActionRepository actionRepository;
 
     private final ConsoleWriter consoleWriter;
 
@@ -34,7 +33,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void balance(User user) {
         consoleWriter.printBalance(user.getBalance());
-        actionInMemoryRepository.addAction(new Action(user, Activity.BALANCE));
+        actionRepository.addAction(new Action(user, Activity.BALANCE));
     }
 
     /**
@@ -53,8 +52,8 @@ public class UserServiceImpl implements UserService {
             return false;
         } else {
             user.setBalance(user.getBalance().subtract(sum));
-            transactionInMemoryRepository.addTransaction(transaction);
-            actionInMemoryRepository.addAction(new Action(user, Activity.DEBIT));
+            transactionRepository.addTransaction(transaction);
+            actionRepository.addAction(new Action(user, Activity.DEBIT));
             return true;
         }
     }
@@ -72,8 +71,7 @@ public class UserServiceImpl implements UserService {
             consoleWriter.print("Вы ввели отрицательное число");
             return true;
         }
-        Optional<Transaction> transactionInRepo = transactionInMemoryRepository.transactions
-                .stream().filter(el -> el.getTransactionId() == transaction.getTransactionId()).findFirst();
+        Optional<Transaction> transactionInRepo =transactionRepository.getById(transaction.getTransactionId());
         if (transactionInRepo.isPresent()) {
             consoleWriter.print("Транзакция с таким id была проведена");
             return true;
@@ -93,8 +91,8 @@ public class UserServiceImpl implements UserService {
     public boolean credit(BigDecimal sum, User user, Transaction transaction) {
         if (validate(sum, transaction)) return false;
         user.setBalance(user.getBalance().add(sum));
-        transactionInMemoryRepository.transactions.add(transaction);
-        actionInMemoryRepository.actions.add(new Action(user, Activity.CREDIT));
+        transactionRepository.addTransaction(transaction);
+        actionRepository.addAction(new Action(user, Activity.CREDIT));
         return true;
     }
 
@@ -106,10 +104,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<Transaction> history(User user) {
-        List<Transaction> transactions = transactionInMemoryRepository.transactions
-                .stream()
-                .filter(el -> el.getUser().getUserName().equals(user.getUserName())).toList();
-        actionInMemoryRepository.actions.add(new Action(user, Activity.HISTORY));
+        List<Transaction> transactions =transactionRepository.getAllByUserName(user.getUserName());
+        actionRepository.addAction(new Action(user, Activity.HISTORY));
         return transactions;
     }
 
@@ -121,9 +117,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<Action> activity(User currentUser) {
-        return actionInMemoryRepository.actions
-                .stream().filter(el -> el.getUser().getUserName().equals(currentUser.getUserName()))
-                .collect(Collectors.toList());
+        return actionRepository.getAllByUserName(currentUser.getUserName());
     }
 
 }

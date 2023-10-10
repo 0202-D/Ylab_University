@@ -1,7 +1,7 @@
 package io.ylab.service;
 
-import io.ylab.dao.action.ActionInMemoryRepository;
-import io.ylab.dao.user.UserInMemoryRepository;
+import io.ylab.dao.action.ActionRepository;
+import io.ylab.dao.user.UserRepository;
 import io.ylab.model.Action;
 import io.ylab.model.Activity;
 import io.ylab.model.User;
@@ -18,11 +18,11 @@ import java.util.Scanner;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private static final Scanner scanner = new Scanner(System.in);
-    private final UserInMemoryRepository userInMemoryRepository;
+    private final UserRepository userRepository;
 
     private final ConsoleWriter consoleWriter;
 
-    private final ActionInMemoryRepository actionInMemoryRepository;
+    private final ActionRepository actionRepository;
 
     /**
      * Метод для добавления нового пользователя.
@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
         }
         String userName = nameAndPassword[0];
         String password = nameAndPassword[1];
-        Optional<User> user = userInMemoryRepository.getByName(userName);
+        Optional<User> user = userRepository.getByName(userName);
         if (user.isPresent()) {
             consoleWriter.print("Пользователь с таким именем уже существует!");
             return false;
@@ -45,8 +45,8 @@ public class AuthServiceImpl implements AuthService {
             newUser.setUserName(userName);
             newUser.setPassword(password);
             newUser.setBalance(new BigDecimal(0));
-            userInMemoryRepository.addUser(newUser);
-            actionInMemoryRepository.addAction(new Action(newUser, Activity.REGISTERED));
+            userRepository.addUser(newUser);
+            actionRepository.addAction(new Action(newUser, Activity.REGISTERED));
             consoleWriter.print("Вы зарегестрированы!");
             return true;
         }
@@ -64,7 +64,7 @@ public class AuthServiceImpl implements AuthService {
         }
         String userName = nameAndPassword[0];
         String password = nameAndPassword[1];
-        Optional<User> user = userInMemoryRepository.users.stream().filter(e -> e.getUserName().equals(userName)).findFirst();
+        Optional<User> user = userRepository.getByName(userName);
         if (user.isEmpty()) {
             consoleWriter.print("Такого пользователя не существует!");
             return null;
@@ -74,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
             return null;
         }
         consoleWriter.print("Вы вошли");
-        actionInMemoryRepository.addAction(new Action(user.get(), Activity.ENTERED));
+        actionRepository.addAction(new Action(user.get(), Activity.ENTERED));
         return user.get();
     }
 

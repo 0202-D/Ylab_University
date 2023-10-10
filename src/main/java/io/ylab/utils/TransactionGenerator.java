@@ -11,7 +11,6 @@ public class TransactionGenerator {
     private static AtomicLong id = new AtomicLong(0);
 
     public Transaction generateTransaction(TransactionalType transactionalType, BigDecimal sum, User user) {
-        long transactionId = id.addAndGet(1);
         return Transaction.builder()
                 .transactionId(id.incrementAndGet())
                 .transactionalType(transactionalType)

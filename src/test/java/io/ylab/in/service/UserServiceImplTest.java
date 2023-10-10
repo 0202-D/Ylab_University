@@ -1,97 +1,101 @@
 package io.ylab.in.service;
 
 import io.ylab.Utils;
-import io.ylab.dao.action.ActionInMemoryRepository;
-import io.ylab.dao.transaction.TransactionInMemoryRepository;
-import io.ylab.dao.user.UserInMemoryRepository;
+import io.ylab.dao.action.ActionRepository;
+import io.ylab.dao.transaction.TransactionRepository;
 import io.ylab.model.*;
 import io.ylab.service.UserServiceImpl;
 import io.ylab.utils.ConsoleWriter;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
 
 class UserServiceImplTest {
-    private UserServiceImpl userService;
+    @Mock
+    private TransactionRepository transactionRepository;
+    @Mock
+    private ActionRepository actionRepository;
 
     @Mock
-    private TransactionInMemoryRepository transactionInMemoryRepository;
-    private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
-    @Mock
-    private UserInMemoryRepository userInMemoryRepository;
+    ConsoleWriter consoleWriter;
 
-    @Mock
-    private  ActionInMemoryRepository actionInMemoryRepository;
+    @InjectMocks
+    UserServiceImpl userService;
 
-    ConsoleWriter consoleWriter = new ConsoleWriter();
+
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        userService = new UserServiceImpl(transactionInMemoryRepository,actionInMemoryRepository,consoleWriter);
-        actionInMemoryRepository.actions = new ArrayList<>();
-        System.setOut(new PrintStream(outputStreamCaptor));
-        transactionInMemoryRepository.transactions = new ArrayList<>();
+    }
+
+
+
+    @Test
+    void testDebitMethodSuccess() {
+        User user = Utils.getUser();
+        Transaction transaction = new Transaction(1L, TransactionalType.DEBIT, new BigDecimal("50"), user);
+        boolean result = userService.debit(new BigDecimal("50"), user, transaction);
+        assertEquals(new BigDecimal("50"), user.getBalance());
+        Mockito.verify(transactionRepository).addTransaction(transaction);
+        Mockito.verify(actionRepository).addAction(new Action(user, Activity.DEBIT));
+        assertTrue(result);
     }
 
     @Test
-    @DisplayName("Проверка метода вывода баланса")
-    void testBalance() {
+    void testCreditMethodSuccess() {
         User user = Utils.getUser();
-        userService.balance(user);
-        assertEquals("Ваш баланс = 100\n**********************\n".replaceAll("\\r|\\n", ""),
-                outputStreamCaptor.toString().replaceAll("\\r|\\n", ""));
-        verify(actionInMemoryRepository).actions.add(new Action(user, Activity.BALANCE));
-    }
-
-    @Test
-    @DisplayName("Проверка метода вывода активности")
-    void testActivity() {
-        User user = Utils.getUser();
-        Transaction transaction = new Transaction();
-        actionInMemoryRepository.actions.add(new Action(user, Activity.DEBIT));
-        actionInMemoryRepository.actions.add(new Action(user, Activity.CREDIT));
-        Action unrelatedAction = new Action(new User(), Activity.DEBIT);
-
-        assertEquals(2, userService.activity(user).size());
-        assertTrue(userService.activity(user).contains(new Action(user, Activity.DEBIT)));
-        assertTrue(userService.activity(user).contains(new Action(user, Activity.CREDIT)));
-        assertFalse(userService.activity(user).contains(unrelatedAction));
-    }
-
-    @Test
-    @DisplayName("Проверка метода снятия средств")
-    void testDebitBalance() {
-        User user = Utils.getUser();
-        Transaction transaction = new Transaction();
-        BigDecimal sum = new BigDecimal("150");
-
-        assertFalse(userService.debit(sum, user, transaction));
-        assertEquals(new BigDecimal("100"), user.getBalance());
-        assertFalse(transactionInMemoryRepository.transactions.contains(transaction));
-        assertFalse(actionInMemoryRepository.actions.contains(new Action(user, Activity.DEBIT)));
-    }
-    @Test
-    @DisplayName("Проверка метода пополнения баланса")
-    void testCredit() {
-        User user = Utils.getUser();
-        Transaction transaction = new Transaction();
-        BigDecimal sum = new BigDecimal("50");
-
-        assertTrue(userService.credit(sum, user, transaction));
+        Transaction transaction = new Transaction(1L, TransactionalType.CREDIT, new BigDecimal("50"), user);
+        boolean result = userService.credit(new BigDecimal("50"), user, transaction);
         assertEquals(new BigDecimal("150"), user.getBalance());
-        assertTrue(transactionInMemoryRepository.transactions.contains(transaction));
-        assertTrue(actionInMemoryRepository.actions.contains(new Action(user, Activity.CREDIT)));
+        Mockito.verify(transactionRepository).addTransaction(transaction);
+        Mockito.verify(actionRepository).addAction(new Action(user, Activity.CREDIT));
+        assertTrue(result);
     }
 
+    @Test
+    void testHistoryMethod() {
+        User user = Utils.getUser();
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.add(new Transaction(1L, TransactionalType.DEBIT, new BigDecimal("50"), user));
+        transactions.add(new Transaction(2L, TransactionalType.CREDIT, new BigDecimal("100"), user));
+        Mockito.when(transactionRepository.getAllByUserName(user.getUserName())).thenReturn(transactions);
+        List<Transaction> result = userService.history(user);
+        Mockito.verify(transactionRepository).getAllByUserName(user.getUserName());
+        Mockito.verify(actionRepository).addAction(new Action(user, Activity.HISTORY));
+        assertEquals(transactions, result);
+    }
+
+    @Test
+    void testActivityMethod() {
+        User user = Utils.getUser();
+        List<Action> actions = new ArrayList<>();
+        actions.add(new Action(user, Activity.ENTERED));
+        actions.add(new Action(user, Activity.EXITED));
+        Mockito.when(actionRepository.getAllByUserName(user.getUserName())).thenReturn(actions);
+        List<Action> result = userService.activity(user);
+        Mockito.verify(actionRepository).getAllByUserName(user.getUserName());
+        assertEquals(actions, result);
+    }
+
+    @Test
+    void testDebitMethodInsufficientBalance() {
+        User user = Utils.getUser();
+        Transaction transaction = new Transaction(1L, TransactionalType.DEBIT, new BigDecimal("100"), user);
+        boolean result = userService.debit(new BigDecimal("200"), user, transaction);
+        Mockito.verify(consoleWriter).print("Средств недостаточно");
+        Mockito.verify(actionRepository, Mockito.never()).addAction(Mockito.any(Action.class));
+        Mockito.verify(transactionRepository, Mockito.never()).addTransaction(Mockito.any(Transaction.class));
+        assertEquals(new BigDecimal("100"), user.getBalance());
+        assertFalse(result);
+    }
 }
