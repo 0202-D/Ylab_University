@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ActionInMemoryRepository implements ActionRepository {
-    public List<Action> actions = new ArrayList<>();
+    public final List<Action> actions = new ArrayList<>();
 
     @Override
     public void addAction(Action action) {

@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class TransactionInMemoryRepository implements TransactionRepository{
-    public  List<Transaction> transactions = new ArrayList<>();
+    public final List<Transaction> transactions = new ArrayList<>();
 
     public void addTransaction(Transaction transaction){
         transactions.add(transaction);

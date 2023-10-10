@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class UserInMemoryRepository implements UserRepository{
 
-    public List<User> users = new ArrayList<>();
+    public final List<User> users = new ArrayList<>();
 
 
     public void addUser(User user){
