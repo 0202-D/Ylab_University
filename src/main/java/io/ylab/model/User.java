@@ -14,7 +14,16 @@ import java.math.BigDecimal;
  * Класс, представляющий пользователя системы.
  */
 public class User {
-    String userName;// Имя пользователя
-    String password;// Пароль пользователя
-    BigDecimal balance;//анс пользователя
+    /**
+     * Имя пользователя
+     */
+    String userName;
+    /**
+     * Пароль пользователя
+     */
+    String password;
+    /**
+     * Баланс пользователя
+     */
+    BigDecimal balance;
 }
