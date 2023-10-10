@@ -5,6 +5,7 @@ import io.ylab.dao.user.UserInMemoryRepository;
 import io.ylab.model.Action;
 import io.ylab.model.Activity;
 import io.ylab.model.User;
+import io.ylab.utils.ConsoleWriter;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
@@ -18,6 +19,8 @@ import java.util.Scanner;
 public class AuthServiceImpl implements AuthService {
     private static final Scanner scanner = new Scanner(System.in);
     private final UserInMemoryRepository userInMemoryRepository;
+
+    private final ConsoleWriter consoleWriter;
 
     private final ActionInMemoryRepository actionInMemoryRepository;
 
@@ -33,10 +36,9 @@ public class AuthServiceImpl implements AuthService {
         }
         String userName = nameAndPassword[0];
         String password = nameAndPassword[1];
-        Optional<User> user = userInMemoryRepository.users.stream().filter(e -> e.getUserName().equals(userName)).findFirst();
+        Optional<User> user = userInMemoryRepository.getByName(userName);
         if (user.isPresent()) {
-            System.out.println("Пользователь с таким именем уже существует!");
-            System.out.println("Такого пользователя не существует!");
+            consoleWriter.print("Пользователь с таким именем уже существует!");
             return false;
         } else {
             User newUser = new User();
@@ -45,8 +47,7 @@ public class AuthServiceImpl implements AuthService {
             newUser.setBalance(new BigDecimal(0));
             userInMemoryRepository.addUser(newUser);
             actionInMemoryRepository.addAction(new Action(newUser, Activity.REGISTERED));
-            System.out.println("Вы зарегестрированы!");
-            System.out.println("**********************");
+            consoleWriter.print("Вы зарегестрированы!");
             return true;
         }
     }
@@ -65,18 +66,14 @@ public class AuthServiceImpl implements AuthService {
         String password = nameAndPassword[1];
         Optional<User> user = userInMemoryRepository.users.stream().filter(e -> e.getUserName().equals(userName)).findFirst();
         if (user.isEmpty()) {
-            System.out.println("Такого пользователя не существует!");
-            System.out.println("**********************");
+            consoleWriter.print("Такого пользователя не существует!");
             return null;
         }
         if (!user.get().getPassword().equals(password)) {
-            System.out.println("Не верный пароль");
-            System.out.println("**********************");
+            consoleWriter.print("Не верный пароль");
             return null;
         }
-
-        System.out.println("Вы вошли");
-        System.out.println("**********************");
+        consoleWriter.print("Вы вошли");
         actionInMemoryRepository.addAction(new Action(user.get(), Activity.ENTERED));
         return user.get();
     }

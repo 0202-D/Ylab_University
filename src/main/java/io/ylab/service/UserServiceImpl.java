@@ -6,12 +6,14 @@ import io.ylab.model.Action;
 import io.ylab.model.Activity;
 import io.ylab.model.Transaction;
 import io.ylab.model.User;
+import io.ylab.utils.ConsoleWriter;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 /**
  * Реализация интерфейса UserService, предоставляющая функциональность работы с балансом пользователей и их транзакциями.
  */
@@ -22,20 +24,24 @@ public class UserServiceImpl implements UserService {
 
     private final ActionInMemoryRepository actionInMemoryRepository;
 
+    private final ConsoleWriter consoleWriter;
+
     /**
      * Метод для получения баланса пользователя.
+     *
      * @param user - объект пользователя, для которого нужно получить баланс.
      */
     @Override
     public void balance(User user) {
-        System.out.println("Ваш баланс = " + user.getBalance());
-        System.out.println("**********************");
+        consoleWriter.printBalance(user.getBalance());
         actionInMemoryRepository.addAction(new Action(user, Activity.BALANCE));
     }
+
     /**
      * Метод для списания средств с баланса пользователя.
-     * @param sum - сумма списания.
-     * @param user - объект пользователя, у которого нужно списать средства.
+     *
+     * @param sum         - сумма списания.
+     * @param user        - объект пользователя, у которого нужно списать средства.
      * @param transaction - объект транзакции, описывающий проведенную операцию.
      * @return true, если операция успешно проведена, false - если на балансе недостаточно средств для списания.
      */
@@ -43,8 +49,7 @@ public class UserServiceImpl implements UserService {
     public boolean debit(BigDecimal sum, User user, Transaction transaction) {
         if (validate(sum, transaction)) return false;
         if (user.getBalance().compareTo(sum) < 0) {
-            System.out.println("Средств недостаточно!");
-            System.out.println("**********************");
+           consoleWriter.print("Средств недостаточно");
             return false;
         } else {
             user.setBalance(user.getBalance().subtract(sum));
@@ -53,32 +58,34 @@ public class UserServiceImpl implements UserService {
             return true;
         }
     }
+
     /**
      * Метод для проверки корректности введенных данных.
-     * @param sum - сумма, которую нужно проверить.
+     *
+     * @param sum         - сумма, которую нужно проверить.
      * @param transaction - объект транзакции, который нужно проверить на уникальность id.
      * @return true, если введены некорректные данные.
      * @throws RuntimeException если транзакция с таким id уже проводилась.
      */
     private boolean validate(BigDecimal sum, Transaction transaction) {
         if (sum.compareTo(BigDecimal.ZERO) < 0) {
-            System.out.println("Вы ввели отрицательное число");
-            System.out.println("**********************");
+            consoleWriter.print("Вы ввели отрицательное число");
             return true;
         }
         Optional<Transaction> transactionInRepo = transactionInMemoryRepository.transactions
-                .stream().filter(el -> el.getId() == transaction.getId()).findFirst();
+                .stream().filter(el -> el.getTransactionId() == transaction.getTransactionId()).findFirst();
         if (transactionInRepo.isPresent()) {
-            System.out.println("Транзакция с таким id была проведена");
-            System.out.println("**********************");
+            consoleWriter.print("Транзакция с таким id была проведена");
             return true;
         }
         return false;
     }
+
     /**
      * Метод для зачисления средств на баланс пользователя.
-     * @param sum - сумма зачисления.
-     * @param user - объект пользователя, на баланс которого нужно зачислить средства.
+     *
+     * @param sum         - сумма зачисления.
+     * @param user        - объект пользователя, на баланс которого нужно зачислить средства.
      * @param transaction - объект транзакции, описывающий проведенную операцию.
      * @return true, если операция успешно проведена.
      */
@@ -90,8 +97,10 @@ public class UserServiceImpl implements UserService {
         actionInMemoryRepository.actions.add(new Action(user, Activity.CREDIT));
         return true;
     }
+
     /**
      * Метод для получения списка транзакций пользователя.
+     *
      * @param user - объект пользователя, для которого нужно получить список транзакций.
      * @return список транзакций пользователя.
      */
@@ -103,8 +112,10 @@ public class UserServiceImpl implements UserService {
         actionInMemoryRepository.actions.add(new Action(user, Activity.HISTORY));
         return transactions;
     }
+
     /**
      * Метод для получения списка действий пользователя.
+     *
      * @param currentUser - объект пользователя, для которого нужно получить список действий.
      * @return список действий пользователя.
      */

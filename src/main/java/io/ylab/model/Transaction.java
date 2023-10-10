@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -19,7 +18,7 @@ public class Transaction {
     /**
      * Уникальный идентификатор транзакции.
      */
-    AtomicLong id;
+    Long transactionId;
     /**
      * Тип транзакции (debit, credit).
      */

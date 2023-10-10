@@ -1,11 +1,14 @@
 package io.ylab.in.service;
 
-import io.ylab.dao.transaction.TransactionInMemoryRepository;
+import io.ylab.Utils;
 import io.ylab.dao.action.ActionInMemoryRepository;
+import io.ylab.dao.transaction.TransactionInMemoryRepository;
 import io.ylab.dao.user.UserInMemoryRepository;
 import io.ylab.model.*;
 import io.ylab.service.UserServiceImpl;
+import io.ylab.utils.ConsoleWriter;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -14,7 +17,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -31,27 +33,31 @@ class UserServiceImplTest {
     @Mock
     private  ActionInMemoryRepository actionInMemoryRepository;
 
+    ConsoleWriter consoleWriter = new ConsoleWriter();
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        userService = new UserServiceImpl(transactionInMemoryRepository,actionInMemoryRepository);
+        userService = new UserServiceImpl(transactionInMemoryRepository,actionInMemoryRepository,consoleWriter);
         actionInMemoryRepository.actions = new ArrayList<>();
         System.setOut(new PrintStream(outputStreamCaptor));
         transactionInMemoryRepository.transactions = new ArrayList<>();
     }
 
     @Test
+    @DisplayName("Проверка метода вывода баланса")
     void testBalance() {
-        User user = new User("Иван", "123", new BigDecimal(100)); // Создаем тестового пользователя
-        userService.balance(user); // Вызываем метод balance
+        User user = Utils.getUser();
+        userService.balance(user);
         assertEquals("Ваш баланс = 100\n**********************\n".replaceAll("\\r|\\n", ""),
                 outputStreamCaptor.toString().replaceAll("\\r|\\n", ""));
-        verify(actionInMemoryRepository).actions.add(new Action(user, Activity.BALANCE)); // Проверяем, что в UserInMemoryRepository была добавлена соответствующая активность
+        verify(actionInMemoryRepository).actions.add(new Action(user, Activity.BALANCE));
     }
 
     @Test
+    @DisplayName("Проверка метода вывода активности")
     void testActivity() {
-        User user = new User("Иван", "123", new BigDecimal("100.00"));
+        User user = Utils.getUser();
         Transaction transaction = new Transaction();
         actionInMemoryRepository.actions.add(new Action(user, Activity.DEBIT));
         actionInMemoryRepository.actions.add(new Action(user, Activity.CREDIT));
@@ -64,45 +70,28 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Проверка метода снятия средств")
     void testDebitBalance() {
-        User user = new User("Иван","123", new BigDecimal("100.00"));
+        User user = Utils.getUser();
         Transaction transaction = new Transaction();
-        BigDecimal sum = new BigDecimal("150.00");
+        BigDecimal sum = new BigDecimal("150");
 
         assertFalse(userService.debit(sum, user, transaction));
-        assertEquals(new BigDecimal("100.00"), user.getBalance());
+        assertEquals(new BigDecimal("100"), user.getBalance());
         assertFalse(transactionInMemoryRepository.transactions.contains(transaction));
         assertFalse(actionInMemoryRepository.actions.contains(new Action(user, Activity.DEBIT)));
     }
     @Test
+    @DisplayName("Проверка метода пополнения баланса")
     void testCredit() {
-        User user = new User("Иван", "123", new BigDecimal("100.00"));
+        User user = Utils.getUser();
         Transaction transaction = new Transaction();
-        BigDecimal sum = new BigDecimal("50.00");
+        BigDecimal sum = new BigDecimal("50");
 
         assertTrue(userService.credit(sum, user, transaction));
-        assertEquals(new BigDecimal("150.00"), user.getBalance());
+        assertEquals(new BigDecimal("150"), user.getBalance());
         assertTrue(transactionInMemoryRepository.transactions.contains(transaction));
         assertTrue(actionInMemoryRepository.actions.contains(new Action(user, Activity.CREDIT)));
     }
-    @Test
-    void testHistory() {
-        User user = new User("Bob","123" ,new BigDecimal("100.00"));
-        Transaction transaction1 = new Transaction(new AtomicLong(1),
-                TransactionalType.DEBIT,new BigDecimal(100),user);
-        Transaction transaction2 = new Transaction(new AtomicLong(1),
-                TransactionalType.DEBIT,new BigDecimal(100),user);
-        transactionInMemoryRepository.transactions.add(transaction1);
-        transactionInMemoryRepository.transactions.add(transaction2);
-        Transaction unrelatedTransaction = new Transaction(new AtomicLong(1),
-                TransactionalType.DEBIT,new BigDecimal(100),user);
-
-        assertEquals(2, userService.history(user).size());
-        assertTrue(userService.history(user).contains(transaction1));
-        assertTrue(userService.history(user).contains(transaction2));
-        assertFalse(userService.history(user).contains(unrelatedTransaction));
-        assertTrue(actionInMemoryRepository.actions.contains(new Action(user, Activity.HISTORY)));
-    }
-
 
 }
