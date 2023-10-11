@@ -1,49 +1,42 @@
-package io.ylab.in.service;
+package io.ylab.service;
 
 import io.ylab.Utils;
 import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.transaction.TransactionRepository;
-import io.ylab.model.*;
-import io.ylab.service.UserServiceImpl;
+import io.ylab.model.Action;
+import io.ylab.model.Activity;
+import io.ylab.model.Transaction;
+import io.ylab.model.User;
 import io.ylab.utils.ConsoleWriter;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+@ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
     @Mock
     private TransactionRepository transactionRepository;
     @Mock
     private ActionRepository actionRepository;
-
     @Mock
     ConsoleWriter consoleWriter;
-
     @InjectMocks
     UserServiceImpl userService;
 
-
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
-
-
-
     @Test
+    @DisplayName("Тест метода снятия со счетв")
     void testDebitMethodSuccess() {
         User user = Utils.getUser();
-        Transaction transaction = new Transaction(1L, TransactionalType.DEBIT, new BigDecimal("50"), user);
+        Transaction transaction = Utils.getDebitTransaction();
         boolean result = userService.debit(new BigDecimal("50"), user, transaction);
         assertEquals(new BigDecimal("50"), user.getBalance());
         Mockito.verify(transactionRepository).addTransaction(transaction);
@@ -52,9 +45,10 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тест метода пополнения счетв")
     void testCreditMethodSuccess() {
         User user = Utils.getUser();
-        Transaction transaction = new Transaction(1L, TransactionalType.CREDIT, new BigDecimal("50"), user);
+        Transaction transaction = Utils.getCreditTransaction();
         boolean result = userService.credit(new BigDecimal("50"), user, transaction);
         assertEquals(new BigDecimal("150"), user.getBalance());
         Mockito.verify(transactionRepository).addTransaction(transaction);
@@ -63,11 +57,12 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тест вывода истории")
     void testHistoryMethod() {
         User user = Utils.getUser();
         List<Transaction> transactions = new ArrayList<>();
-        transactions.add(new Transaction(1L, TransactionalType.DEBIT, new BigDecimal("50"), user));
-        transactions.add(new Transaction(2L, TransactionalType.CREDIT, new BigDecimal("100"), user));
+        transactions.add(Utils.getDebitTransaction());
+        transactions.add(Utils.getCreditTransaction());
         Mockito.when(transactionRepository.getAllByUserName(user.getUserName())).thenReturn(transactions);
         List<Transaction> result = userService.history(user);
         Mockito.verify(transactionRepository).getAllByUserName(user.getUserName());
@@ -76,6 +71,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тест вывода активности")
     void testActivityMethod() {
         User user = Utils.getUser();
         List<Action> actions = new ArrayList<>();
@@ -88,9 +84,10 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Тест на негативный сценарий снятия со счета")
     void testDebitMethodInsufficientBalance() {
         User user = Utils.getUser();
-        Transaction transaction = new Transaction(1L, TransactionalType.DEBIT, new BigDecimal("100"), user);
+        Transaction transaction = Utils.getDebitTransaction();
         boolean result = userService.debit(new BigDecimal("200"), user, transaction);
         Mockito.verify(consoleWriter).print("Средств недостаточно");
         Mockito.verify(actionRepository, Mockito.never()).addAction(Mockito.any(Action.class));
