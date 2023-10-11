@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class TransactionInMemoryRepository implements TransactionRepository{
+public class TransactionInMemoryRepository implements TransactionRepository {
     public final List<Transaction> transactions = new ArrayList<>();
 
-    public void addTransaction(Transaction transaction){
+    public void addTransaction(Transaction transaction) {
         transactions.add(transaction);
     }
 
@@ -23,7 +23,7 @@ public class TransactionInMemoryRepository implements TransactionRepository{
 
     @Override
     public Optional<Transaction> getById(Long transactionId) {
-        return  transactions
+        return transactions
                 .stream().filter(el -> el.getTransactionId() == transactionId).findFirst();
     }
 }

@@ -12,7 +12,7 @@ public interface UserService {
 
     boolean debit(BigDecimal sum, User user, Transaction transaction);
 
-    boolean credit(BigDecimal sum, User user,Transaction transaction);
+    boolean credit(BigDecimal sum, User user, Transaction transaction);
 
     List<Transaction> history(User user);
 

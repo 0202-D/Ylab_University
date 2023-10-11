@@ -30,10 +30,10 @@ public class WalletService {
         ConsoleWriter consoleWriter = new ConsoleWriter();
         UserRepository userRepository = new UserInMemoryRepository();
         ActionRepository actionRepository = new ActionInMemoryRepository();
-        AuthService authService = new AuthServiceImpl(userRepository,consoleWriter,actionRepository);
+        AuthService authService = new AuthServiceImpl(userRepository, consoleWriter, actionRepository);
         AuthController authController = new AuthController(authService);
         TransactionRepository transactionRepository = new TransactionInMemoryRepository();
-        UserService userService = new UserServiceImpl(transactionRepository, actionRepository,consoleWriter);
+        UserService userService = new UserServiceImpl(transactionRepository, actionRepository, consoleWriter);
         User currentUser;
         UserController userController = new UserController(userService);
         TransactionGenerator transactionGenerator = new TransactionGenerator();

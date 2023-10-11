@@ -6,12 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserInMemoryRepository implements UserRepository{
+public class UserInMemoryRepository implements UserRepository {
 
     public final List<User> users = new ArrayList<>();
 
-
-    public void addUser(User user){
+    public void addUser(User user) {
         users.add(user);
     }
 

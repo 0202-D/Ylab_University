@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     public boolean debit(BigDecimal sum, User user, Transaction transaction) {
         if (validate(sum, transaction)) return false;
         if (user.getBalance().compareTo(sum) < 0) {
-           consoleWriter.print("Средств недостаточно");
+            consoleWriter.print("Средств недостаточно");
             return false;
         } else {
             user.setBalance(user.getBalance().subtract(sum));
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
             consoleWriter.print("Вы ввели отрицательное число");
             return true;
         }
-        Optional<Transaction> transactionInRepo =transactionRepository.getById(transaction.getTransactionId());
+        Optional<Transaction> transactionInRepo = transactionRepository.getById(transaction.getTransactionId());
         if (transactionInRepo.isPresent()) {
             consoleWriter.print("Транзакция с таким id была проведена");
             return true;
@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<Transaction> history(User user) {
-        List<Transaction> transactions =transactionRepository.getAllByUserName(user.getUserName());
+        List<Transaction> transactions = transactionRepository.getAllByUserName(user.getUserName());
         actionRepository.addAction(new Action(user, Activity.HISTORY));
         return transactions;
     }

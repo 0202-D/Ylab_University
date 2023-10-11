@@ -21,7 +21,7 @@ public class UserController {
         return userService.debit(sum, user, transaction);
     }
 
-    public boolean  credit(BigDecimal sum, User user, Transaction transaction) {
+    public boolean credit(BigDecimal sum, User user, Transaction transaction) {
         return userService.credit(sum, user, transaction);
     }
 
@@ -30,6 +30,6 @@ public class UserController {
     }
 
     public List<Action> activity(User currentUser) {
-       return userService.activity(currentUser);
+        return userService.activity(currentUser);
     }
 }

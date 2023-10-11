@@ -9,5 +9,5 @@ public interface ActionRepository {
 
     void addAction(Action action);
 
-    List<Action>getAllByUserName(String userName);
+    List<Action> getAllByUserName(String userName);
 }
