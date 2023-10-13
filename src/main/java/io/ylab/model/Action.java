@@ -15,6 +15,10 @@ import lombok.experimental.FieldDefaults;
  */
 public class Action {
     /**
+     * идентификатор
+     */
+    long actionId;
+    /**
      * Объект пользователя, выполнившего действие.
      */
     User user;

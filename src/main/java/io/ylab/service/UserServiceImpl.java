@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void balance(User user) {
         consoleWriter.printBalance(user.getBalance());
-        actionRepository.addAction(new Action(user, Activity.BALANCE));
+        actionRepository.addAction(new Action(1L,user, Activity.BALANCE));
     }
 
     /**
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
         } else {
             user.setBalance(user.getBalance().subtract(sum));
             transactionRepository.addTransaction(transaction);
-            actionRepository.addAction(new Action(user, Activity.DEBIT));
+            actionRepository.addAction(new Action(1L,user, Activity.DEBIT));
             return true;
         }
     }
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
         if (validate(sum, transaction)) return false;
         user.setBalance(user.getBalance().add(sum));
         transactionRepository.addTransaction(transaction);
-        actionRepository.addAction(new Action(user, Activity.CREDIT));
+        actionRepository.addAction(new Action(1L,user, Activity.CREDIT));
         return true;
     }
 
@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Transaction> history(User user) {
         List<Transaction> transactions = transactionRepository.getAllByUserName(user.getUserName());
-        actionRepository.addAction(new Action(user, Activity.HISTORY));
+        actionRepository.addAction(new Action(1L,user, Activity.HISTORY));
         return transactions;
     }
 

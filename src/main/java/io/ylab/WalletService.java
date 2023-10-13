@@ -16,7 +16,9 @@ import io.ylab.service.AuthServiceImpl;
 import io.ylab.service.UserService;
 import io.ylab.service.UserServiceImpl;
 import io.ylab.utils.ConsoleWriter;
+import io.ylab.utils.LiquibaseStarter;
 import io.ylab.utils.TransactionGenerator;
+import liquibase.Liquibase;
 
 import java.math.BigDecimal;
 import java.util.Scanner;
@@ -37,6 +39,14 @@ public class WalletService {
         User currentUser;
         UserController userController = new UserController(userService);
         TransactionGenerator transactionGenerator = new TransactionGenerator();
+
+        try {
+            LiquibaseStarter liquibaseStarter = new LiquibaseStarter();
+            Liquibase liquibase = liquibaseStarter.createLiquibase();
+            liquibase.update("");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         while (true) {
             consoleWriter.print("Добро пожаловать!");

@@ -15,6 +15,10 @@ import java.math.BigDecimal;
  */
 public class User {
     /**
+     * Идентификатор пользователя
+     */
+    long userId;
+    /**
      * Имя пользователя
      */
     String userName;
