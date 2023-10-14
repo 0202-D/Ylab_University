@@ -28,6 +28,8 @@ public class UserInMemoryRepository implements UserRepository {
 
     @Override
     public void updateBalance(long userId, BigDecimal bigDecimal) {
-
+        User user = users.stream().filter(u -> u.getUserId() == userId)
+                .findFirst().orElseThrow(() -> new RuntimeException("Нет такого пользователя"));
+        user.setBalance(bigDecimal);
     }
 }
