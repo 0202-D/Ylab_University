@@ -78,7 +78,6 @@ public class JdbcTransactionRepository implements TransactionRepository {
             } else {
                 return Optional.empty();
             }
-            return Optional.empty();
         } catch (SQLException e) {
             e.printStackTrace();
         }

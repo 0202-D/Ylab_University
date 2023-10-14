@@ -23,4 +23,13 @@ public class DataBaseConnector {
     public static Connection getConnection() {
         return connection;
     }
+    public static Connection updateConnectionProperties(String url, String username, String password) {
+        try {
+            connection.close();
+            connection = DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return connection;
+    }
 }
