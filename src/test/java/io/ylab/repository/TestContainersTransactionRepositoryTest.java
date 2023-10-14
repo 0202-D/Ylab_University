@@ -24,7 +24,12 @@ class TestContainersTransactionRepositoryTest {
     private PostgreSQLContainer<?> container;
     private Connection connection;
     private JdbcTransactionRepository transactionRepository;
-
+    private final static String CREATE_SCHEMA_IF_NOT_EXISTS_DOMAIN = "CREATE SCHEMA IF NOT EXISTS domain";
+    private final static String CREATE_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS domain.user" +
+            " (user_id SERIAL PRIMARY KEY, user_name VARCHAR(255),password varchar(255),balance decimal)";
+    private final static String CREATE_TABLE_QUERY_TWO = "CREATE TABLE IF NOT EXISTS domain.transaction" +
+            " (transaction_id SERIAL PRIMARY KEY, transactional_type VARCHAR(255),sum decimal,user_id bigint)";
+    private final static String INSERT = "INSERT INTO domain.user (user_name,password,balance) VALUES(?,?,?)";
 
     @BeforeEach
     public void setup() throws SQLException {
@@ -34,26 +39,20 @@ class TestContainersTransactionRepositoryTest {
         String username = container.getUsername();
         String password = container.getPassword();
         connection = DataBaseConnector.updateConnectionProperties(jdbcUrl, username, password);
-        String createSchemaQuery = "CREATE SCHEMA IF NOT EXISTS domain";
-        try (PreparedStatement statement = connection.prepareStatement(createSchemaQuery)) {
+        try (PreparedStatement statement = connection.prepareStatement(CREATE_SCHEMA_IF_NOT_EXISTS_DOMAIN)) {
             statement.executeUpdate();
         }
-        String createTableQuery = "CREATE TABLE IF NOT EXISTS domain.user" +
-                " (user_id SERIAL PRIMARY KEY, user_name VARCHAR(255),password varchar(255),balance decimal)";
-        try (PreparedStatement statement = connection.prepareStatement(createTableQuery)) {
+        try (PreparedStatement statement = connection.prepareStatement(CREATE_TABLE_QUERY)) {
             statement.executeUpdate();
         }
-        String insertTableQuery = "INSERT INTO domain.user (user_name,password,balance) VALUES(?,?,?)";
-        try (PreparedStatement statement = connection.prepareStatement(insertTableQuery)) {
+        try (PreparedStatement statement = connection.prepareStatement(INSERT)) {
             statement.setString(1, "username");
             statement.setString(2, "password");
             statement.setBigDecimal(3, BigDecimal.valueOf(100));
             statement.executeUpdate();
             statement.executeUpdate();
         }
-        String createTableQueryTwo = "CREATE TABLE IF NOT EXISTS domain.transaction" +
-                " (transaction_id SERIAL PRIMARY KEY, transactional_type VARCHAR(255),sum decimal,user_id bigint)";
-        try (PreparedStatement statement = connection.prepareStatement(createTableQueryTwo)) {
+        try (PreparedStatement statement = connection.prepareStatement(CREATE_TABLE_QUERY_TWO)) {
             statement.executeUpdate();
         }
         transactionRepository = new JdbcTransactionRepository();

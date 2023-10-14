@@ -24,22 +24,21 @@ class TestContainersUserRepositoryTest {
     private Connection connection;
     private JdbcUserRepository userRepository;
 
+    private final static String CREATE_SCHEMA_IF_NOT_EXISTS_DOMAIN = "CREATE SCHEMA IF NOT EXISTS domain";
+    private final static String CREATE_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS domain.user" +
+            " (user_id SERIAL PRIMARY KEY, user_name VARCHAR(255),password varchar(255),balance decimal)";
     @BeforeEach
     public void setup() throws SQLException {
         container = new PostgreSQLContainer<>("postgres:latest");
         container.start();
-
         String jdbcUrl = container.getJdbcUrl();
         String username = container.getUsername();
         String password = container.getPassword();
         connection = DataBaseConnector.updateConnectionProperties(jdbcUrl, username, password);
-        String createTableQueryOne = "CREATE SCHEMA IF NOT EXISTS domain";
-        try (PreparedStatement statement = connection.prepareStatement(createTableQueryOne)) {
+        try (PreparedStatement statement = connection.prepareStatement(CREATE_SCHEMA_IF_NOT_EXISTS_DOMAIN)) {
             statement.executeUpdate();
         }
-        String createTableQuery = "CREATE TABLE IF NOT EXISTS domain.user" +
-                " (user_id SERIAL PRIMARY KEY, user_name VARCHAR(255),password varchar(255),balance decimal)";
-        try (PreparedStatement statement = connection.prepareStatement(createTableQuery)) {
+        try (PreparedStatement statement = connection.prepareStatement(CREATE_TABLE_QUERY)) {
             statement.executeUpdate();
         }
         userRepository = new JdbcUserRepository();
