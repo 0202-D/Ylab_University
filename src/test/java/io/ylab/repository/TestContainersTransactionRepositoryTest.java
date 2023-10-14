@@ -56,7 +56,7 @@ class TestContainersTransactionRepositoryTest {
         try (PreparedStatement statement = connection.prepareStatement(createTableQueryTwo)) {
             statement.executeUpdate();
         }
-        transactionRepository= new JdbcTransactionRepository();
+        transactionRepository = new JdbcTransactionRepository();
     }
 
     @AfterEach
@@ -64,6 +64,7 @@ class TestContainersTransactionRepositoryTest {
         connection.close();
         container.stop();
     }
+
     @Test
     void testAddTransaction() {
         User user = Utils.getUser();
@@ -75,6 +76,7 @@ class TestContainersTransactionRepositoryTest {
         assertEquals(1, transactions.size());
         assertEquals(transaction, transactions.get(0));
     }
+
     @Test
     void testGetAllByUserName() {
         User user = Utils.getUser();
@@ -87,6 +89,7 @@ class TestContainersTransactionRepositoryTest {
         List<Transaction> transactions = transactionRepository.getAllByUserName(user.getUserName());
         assertEquals(2, transactions.size());
     }
+
     @Test
     void testGetById() {
         Transaction transaction = Utils.getDebitTransaction();
