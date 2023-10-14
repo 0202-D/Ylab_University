@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @ToString
 /**
  * Класс, описывающий действие пользователя в системе.

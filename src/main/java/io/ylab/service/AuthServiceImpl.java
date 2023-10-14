@@ -46,7 +46,10 @@ public class AuthServiceImpl implements AuthService {
             newUser.setPassword(password);
             newUser.setBalance(new BigDecimal(0));
             newUser = userRepository.addUser(newUser);
-            actionRepository.addAction(new Action(1L, newUser, Activity.REGISTERED));
+            actionRepository.addAction(Action.builder()
+                    .user(newUser)
+                    .activity(Activity.REGISTERED)
+                    .build());
             consoleWriter.print("Вы зарегестрированы!");
             return true;
         }
@@ -74,7 +77,10 @@ public class AuthServiceImpl implements AuthService {
             return null;
         }
         consoleWriter.print("Вы вошли");
-        actionRepository.addAction(new Action(1L, user.get(), Activity.ENTERED));
+        actionRepository.addAction(Action.builder()
+                .user(user.get())
+                .activity(Activity.ENTERED)
+                .build());
         return user.get();
     }
 
