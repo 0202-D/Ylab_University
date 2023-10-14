@@ -2,11 +2,11 @@ package io.ylab;
 
 import io.ylab.controller.AuthController;
 import io.ylab.controller.UserController;
-import io.ylab.dao.action.ActionInMemoryRepository;
 import io.ylab.dao.action.ActionRepository;
-import io.ylab.dao.transaction.TransactionInMemoryRepository;
+import io.ylab.dao.action.JdbcActionRepository;
+import io.ylab.dao.transaction.JdbcTransactionRepository;
 import io.ylab.dao.transaction.TransactionRepository;
-import io.ylab.dao.user.UserInMemoryRepository;
+import io.ylab.dao.user.JdbcUserRepository;
 import io.ylab.dao.user.UserRepository;
 import io.ylab.model.Transaction;
 import io.ylab.model.TransactionalType;
@@ -30,12 +30,12 @@ public class WalletService {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         ConsoleWriter consoleWriter = new ConsoleWriter();
-        UserRepository userRepository = new UserInMemoryRepository();
-        ActionRepository actionRepository = new ActionInMemoryRepository();
+        UserRepository userRepository = new JdbcUserRepository();
+        ActionRepository actionRepository = new JdbcActionRepository();
+        TransactionRepository transactionRepository = new JdbcTransactionRepository();
         AuthService authService = new AuthServiceImpl(userRepository, consoleWriter, actionRepository);
         AuthController authController = new AuthController(authService);
-        TransactionRepository transactionRepository = new TransactionInMemoryRepository();
-        UserService userService = new UserServiceImpl(transactionRepository, actionRepository, consoleWriter);
+        UserService userService = new UserServiceImpl(transactionRepository, userRepository, actionRepository, consoleWriter);
         User currentUser;
         UserController userController = new UserController(userService);
         TransactionGenerator transactionGenerator = new TransactionGenerator();
@@ -137,6 +137,4 @@ public class WalletService {
             }
         }
     }
-
-
 }

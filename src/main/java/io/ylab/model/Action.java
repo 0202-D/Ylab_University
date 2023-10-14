@@ -1,21 +1,19 @@
 package io.ylab.model;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 /**
  * Класс, описывающий действие пользователя в системе.
  */
 public class Action {
     /**
-     * идентификатор
+     * идентификатор действия
      */
     long actionId;
     /**

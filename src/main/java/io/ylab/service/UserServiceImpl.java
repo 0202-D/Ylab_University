@@ -2,6 +2,7 @@ package io.ylab.service;
 
 import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.transaction.TransactionRepository;
+import io.ylab.dao.user.UserRepository;
 import io.ylab.model.Action;
 import io.ylab.model.Activity;
 import io.ylab.model.Transaction;
@@ -21,6 +22,8 @@ public class UserServiceImpl implements UserService {
 
     private final TransactionRepository transactionRepository;
 
+    private final UserRepository userRepository;
+
     private final ActionRepository actionRepository;
 
     private final ConsoleWriter consoleWriter;
@@ -32,8 +35,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void balance(User user) {
-        consoleWriter.printBalance(user.getBalance());
-        actionRepository.addAction(new Action(1L,user, Activity.BALANCE));
+        BigDecimal balance = userRepository.getById(user.getUserId()).get().getBalance();
+        consoleWriter.printBalance(balance);
+        actionRepository.addAction(new Action(1L, user, Activity.BALANCE));
     }
 
     /**
@@ -52,8 +56,9 @@ public class UserServiceImpl implements UserService {
             return false;
         } else {
             user.setBalance(user.getBalance().subtract(sum));
+            userRepository.updateBalance(user.getUserId(), user.getBalance());
             transactionRepository.addTransaction(transaction);
-            actionRepository.addAction(new Action(1L,user, Activity.DEBIT));
+            actionRepository.addAction(new Action(1L, user, Activity.DEBIT));
             return true;
         }
     }
@@ -91,8 +96,9 @@ public class UserServiceImpl implements UserService {
     public boolean credit(BigDecimal sum, User user, Transaction transaction) {
         if (validate(sum, transaction)) return false;
         user.setBalance(user.getBalance().add(sum));
+        userRepository.updateBalance(user.getUserId(), user.getBalance());
         transactionRepository.addTransaction(transaction);
-        actionRepository.addAction(new Action(1L,user, Activity.CREDIT));
+        actionRepository.addAction(new Action(1L, user, Activity.CREDIT));
         return true;
     }
 
@@ -105,7 +111,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Transaction> history(User user) {
         List<Transaction> transactions = transactionRepository.getAllByUserName(user.getUserName());
-        actionRepository.addAction(new Action(1L,user, Activity.HISTORY));
+        actionRepository.addAction(new Action(1L, user, Activity.HISTORY));
         return transactions;
     }
 

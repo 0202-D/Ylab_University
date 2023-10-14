@@ -1,0 +1,19 @@
+version: '3'
+services:
+  database:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: wallet
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+  app:
+    container_name: wallet_app
+    build: .
+    depends_on:
+      - database
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/wallet
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
