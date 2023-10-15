@@ -7,6 +7,7 @@ import io.ylab.model.User;
 import io.ylab.utils.DataBaseConnector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -63,6 +64,7 @@ class TestContainersActionRepositoryTest {
         container.stop();
     }
     @Test
+    @DisplayName("Тест добавления активности")
     void testAddAction() {
         // Создание и добавление действия в базу данных
         User user = Utils.getUser();
@@ -72,6 +74,7 @@ class TestContainersActionRepositoryTest {
         assertTrue(actions.contains(action));
     }
     @Test
+    @DisplayName("Тест получения всех активностей по имени юзера")
     void testGetAllByUserName() {
         User user = Utils.getUser();
         Action action1 = Utils.getEnterAction(user);

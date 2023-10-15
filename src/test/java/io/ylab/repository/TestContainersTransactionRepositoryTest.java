@@ -7,6 +7,7 @@ import io.ylab.model.User;
 import io.ylab.utils.DataBaseConnector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -65,6 +66,7 @@ class TestContainersTransactionRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тест добавления транзакции")
     void testAddTransaction() {
         User user = Utils.getUser();
         Transaction transaction = Utils.getDebitTransaction();
@@ -77,6 +79,7 @@ class TestContainersTransactionRepositoryTest {
     }
 
     @Test
+    @DisplayName("Тест получения транзакция всех транзакций по имени пользователя")
     void testGetAllByUserName() {
         User user = Utils.getUser();
         Transaction transaction1 = Utils.getDebitTransaction();
@@ -90,6 +93,7 @@ class TestContainersTransactionRepositoryTest {
     }
 
     @Test
+    @DisplayName("тест получения транзакции по id")
     void testGetById() {
         Transaction transaction = Utils.getDebitTransaction();
 
