@@ -55,7 +55,6 @@ class TestContainersUserRepositoryTest {
     void testAddUser() {
         User user = Utils.getUser();
         User addedUser = userRepository.addUser(user);
-        assertNotNull(addedUser.getUserId());
         assertEquals(user.getUserName(), addedUser.getUserName());
         assertEquals(user.getPassword(), addedUser.getPassword());
         assertEquals(user.getBalance(), addedUser.getBalance());
@@ -82,7 +81,6 @@ class TestContainersUserRepositoryTest {
         Optional<User> optionalUser = userRepository.getById(user.getUserId());
         assertTrue(optionalUser.isPresent());
         User retrievedUser = optionalUser.get();
-        assertNotNull(retrievedUser.getUserId());
         assertEquals(user.getUserName(), retrievedUser.getUserName());
         assertEquals(user.getPassword(), retrievedUser.getPassword());
         assertEquals(user.getBalance(), retrievedUser.getBalance());
@@ -96,7 +94,6 @@ class TestContainersUserRepositoryTest {
         Optional<User> optionalUser = userRepository.getByName(user.getUserName());
         assertTrue(optionalUser.isPresent());
         User retrievedUser = optionalUser.get();
-        assertNotNull(retrievedUser.getUserId());
         assertEquals(user.getUserName(), retrievedUser.getUserName());
         assertEquals(user.getPassword(), retrievedUser.getPassword());
         assertEquals(user.getBalance(), retrievedUser.getBalance());

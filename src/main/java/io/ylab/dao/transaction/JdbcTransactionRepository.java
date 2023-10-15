@@ -15,7 +15,6 @@ import java.util.Optional;
 
 public class JdbcTransactionRepository implements TransactionRepository {
     Connection connection = DataBaseConnector.getConnection();
-
     private final UserRepository userRepository = new JdbcUserRepository();
 
     @Override

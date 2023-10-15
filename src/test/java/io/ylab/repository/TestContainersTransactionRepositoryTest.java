@@ -70,9 +70,7 @@ class TestContainersTransactionRepositoryTest {
     void testAddTransaction() {
         User user = Utils.getUser();
         Transaction transaction = Utils.getDebitTransaction();
-
         transactionRepository.addTransaction(transaction);
-
         List<Transaction> transactions = transactionRepository.getAllByUserName(user.getUserName());
         assertEquals(1, transactions.size());
         assertEquals(transaction, transactions.get(0));
@@ -84,10 +82,8 @@ class TestContainersTransactionRepositoryTest {
         User user = Utils.getUser();
         Transaction transaction1 = Utils.getDebitTransaction();
         Transaction transaction2 = Utils.getCreditTransaction();
-
         transactionRepository.addTransaction(transaction1);
         transactionRepository.addTransaction(transaction2);
-
         List<Transaction> transactions = transactionRepository.getAllByUserName(user.getUserName());
         assertEquals(2, transactions.size());
     }
@@ -96,9 +92,7 @@ class TestContainersTransactionRepositoryTest {
     @DisplayName("тест получения транзакции по id")
     void testGetById() {
         Transaction transaction = Utils.getDebitTransaction();
-
         transactionRepository.addTransaction(transaction);
-
         Optional<Transaction> optionalTransaction = transactionRepository.getById(transaction.getTransactionId());
         assertTrue(optionalTransaction.isPresent());
         assertEquals(transaction, optionalTransaction.get());

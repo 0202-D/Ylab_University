@@ -66,9 +66,8 @@ class TestContainersActionRepositoryTest {
     @Test
     @DisplayName("Тест добавления активности")
     void testAddAction() {
-        // Создание и добавление действия в базу данных
         User user = Utils.getUser();
-        Action action = Utils.getEnterAction(user);
+        Action action = Utils.getHistoryAction(user);
         actionRepository.addAction(action);
         List<Action> actions = actionRepository.getAllByUserName(user.getUserName());
         assertTrue(actions.contains(action));

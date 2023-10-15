@@ -25,7 +25,7 @@ public class Utils {
 
     public static Transaction getCreditTransaction() {
         return Transaction.builder()
-                .transactionId(1L)
+                .transactionId(2L)
                 .transactionalType(TransactionalType.CREDIT)
                 .sum(new BigDecimal("50"))
                 .user(getUser())
@@ -40,28 +40,28 @@ public class Utils {
     }
     public static Action getCreditAction(User user){
         return Action.builder()
-                .actionId(1L)
+                .actionId(2L)
                 .activity(Activity.CREDIT)
                 .user(user)
                 .build();
     }
     public static Action getDebitAction(User user){
         return Action.builder()
-                .actionId(1L)
+                .actionId(3L)
                 .activity(Activity.DEBIT)
                 .user(user)
                 .build();
     }
     public static Action getEnterAction(User user){
         return Action.builder()
-                .actionId(1L)
+                .actionId(5L)
                 .activity(Activity.ENTERED)
                 .user(user)
                 .build();
     }
     public static Action getExitAction(User user){
         return Action.builder()
-                .actionId(1L)
+                .actionId(5L)
                 .activity(Activity.EXITED)
                 .user(user)
                 .build();
