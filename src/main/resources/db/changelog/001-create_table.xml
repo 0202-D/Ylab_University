@@ -2,6 +2,9 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+    <changeSet id="create-schema-domain" author="petrov" runAlways="true">
+        <sql>CREATE SCHEMA IF NOT EXISTS domain;</sql>
+    </changeSet>
     <changeSet id="create-table-user" author="petrov">
         <createTable tableName="user" schemaName="domain">
             <column name="user_id" type="BIGINT" autoIncrement="true">
