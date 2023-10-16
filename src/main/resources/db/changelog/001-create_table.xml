@@ -1,0 +1,53 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+    <changeSet id="create-table-user" author="petrov">
+        <createTable tableName="user" schemaName="domain">
+            <column name="user_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="user_name" type="VARCHAR(50)"/>
+            <column name="password" type="VARCHAR(50)"/>
+            <column name="balance" type="DECIMAL"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="create-table-action" author="petrov">
+        <createTable tableName="action" schemaName="domain">
+            <column name="action_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="activity" type="VARCHAR(50)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableSchemaName="domain"
+                                 baseColumnNames="user_id"
+                                 baseTableName="action"
+                                 constraintName="fk_action_user"
+                                 referencedColumnNames="user_id"
+                                 referencedTableSchemaName="domain"
+                                 referencedTableName="user"/>
+    </changeSet>
+    <changeSet id="create-table-transaction" author="petrov">
+        <createTable tableName="transaction" schemaName="domain">
+            <column name="transaction_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="transactional_type" type="VARCHAR(50)"/>
+            <column name="sum" type="DECIMAL"/>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableSchemaName="domain"
+                                 baseColumnNames="user_id"
+                                 baseTableName="transaction"
+                                 constraintName="fk_transaction_user"
+                                 referencedColumnNames="user_id"
+                                 referencedTableSchemaName="domain"
+                                 referencedTableName="user"/>
+    </changeSet>
+
+</databaseChangeLog>
