@@ -2,18 +2,10 @@ version: '3'
 services:
   database:
     image: postgres
+    container_name: wallet_db
     ports:
       - "5432:5432"
     environment:
       POSTGRES_DB: wallet
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-  app:
-    container_name: wallet_app
-    build: .
-    depends_on:
-      - database
-    environment:
-        DATABASE_URL : postgresql://database:5432/wallet
-        DATABASE_USERNAME : postgres
-        DATABASE_PASSWORD : postgres

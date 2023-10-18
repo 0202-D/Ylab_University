@@ -41,10 +41,11 @@ public class AuthServiceImpl implements AuthService {
             consoleWriter.print("Пользователь с таким именем уже существует!");
             return false;
         } else {
-            User newUser = new User();
-            newUser.setUserName(userName);
-            newUser.setPassword(password);
-            newUser.setBalance(new BigDecimal(0));
+            User newUser = User.builder()
+                    .userName(userName)
+                    .password(password)
+                    .balance(new BigDecimal(0))
+                    .build();
             newUser = userRepository.addUser(newUser);
             actionRepository.addAction(Action.builder()
                     .user(newUser)

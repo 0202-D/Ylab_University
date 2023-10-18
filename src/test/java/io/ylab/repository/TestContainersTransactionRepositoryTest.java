@@ -22,15 +22,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TestContainersTransactionRepositoryTest {
-    private PostgreSQLContainer<?> container;
-    private Connection connection;
-    private JdbcTransactionRepository transactionRepository;
     private final static String CREATE_SCHEMA_IF_NOT_EXISTS_DOMAIN = "CREATE SCHEMA IF NOT EXISTS domain";
     private final static String CREATE_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS domain.user" +
             " (user_id SERIAL PRIMARY KEY, user_name VARCHAR(255),password varchar(255),balance decimal)";
     private final static String CREATE_TABLE_QUERY_TWO = "CREATE TABLE IF NOT EXISTS domain.transaction" +
             " (transaction_id SERIAL PRIMARY KEY, transactional_type VARCHAR(255),sum decimal,user_id bigint)";
     private final static String INSERT = "INSERT INTO domain.user (user_name,password,balance) VALUES(?,?,?)";
+    private PostgreSQLContainer<?> container;
+    private Connection connection;
+    private JdbcTransactionRepository transactionRepository;
 
     @BeforeEach
     public void setup() throws SQLException {

@@ -1,5 +1,6 @@
 package io.ylab.dao.user;
 
+import io.ylab.exception.NotFoundException;
 import io.ylab.model.User;
 import io.ylab.utils.DataBaseConnector;
 
@@ -11,14 +12,16 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 public class JdbcUserRepository implements UserRepository {
-
+    private static final String INSERT_QUERY = "INSERT INTO domain.user (user_name,password,balance) VALUES(?, ?, ?)";
+    private static final String GET_BY_NAME_QUERY = "SELECT u.* from domain.user u where u.user_name = ?";
+    private static final String GET_BY_ID_QUERY = "SELECT u.* from domain.user u where u.user_id = ?";
+    private static final String UPDATE_QUERY = "UPDATE domain.user SET balance = ? WHERE user_id = ?";
     Connection connection = DataBaseConnector.getConnection();
 
     @Override
     public User addUser(User user) {
-        String query = "INSERT INTO domain.user (user_name,password,balance) VALUES(?, ?, ?)";
         try (PreparedStatement statement =
-                     connection.prepareStatement(query)) {
+                     connection.prepareStatement(INSERT_QUERY)) {
             statement.setString(1, user.getUserName());
             statement.setString(2, user.getPassword());
             statement.setBigDecimal(3, user.getBalance());
@@ -27,15 +30,14 @@ public class JdbcUserRepository implements UserRepository {
             e.printStackTrace();
         }
         return getByName(user.getUserName())
-                .orElseThrow(() -> new RuntimeException("Такого пользователя не существует!"));
+                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
     }
 
     @Override
     public Optional<User> getByName(String name) {
-        String query = "SELECT u.* from domain.user u where u.user_name = ?";
         User user = new User();
         try (PreparedStatement statement =
-                     connection.prepareStatement(query)) {
+                     connection.prepareStatement(GET_BY_NAME_QUERY)) {
             statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -55,10 +57,9 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public Optional<User> getById(Long id) {
-        String query = "SELECT u.* from domain.user u where u.user_id = ?";
         User user = new User();
         try (PreparedStatement statement =
-                     connection.prepareStatement(query)) {
+                     connection.prepareStatement(GET_BY_ID_QUERY)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -78,9 +79,8 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public void updateBalance(long userId, BigDecimal balance) {
-        String query = "UPDATE domain.user SET balance = ? WHERE user_id = ?";
         try (PreparedStatement statement =
-                     connection.prepareStatement(query)) {
+                     connection.prepareStatement(UPDATE_QUERY)) {
             statement.setBigDecimal(1, balance);
             statement.setLong(2, userId);
             statement.executeUpdate();

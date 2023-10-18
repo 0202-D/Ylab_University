@@ -2,6 +2,7 @@ package io.ylab.repository;
 
 import io.ylab.Utils;
 import io.ylab.dao.action.JdbcActionRepository;
+import io.ylab.exception.NotFoundException;
 import io.ylab.model.Action;
 import io.ylab.model.User;
 import io.ylab.utils.DataBaseConnector;
@@ -17,19 +18,19 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestContainersActionRepositoryTest {
-    private PostgreSQLContainer<?> container;
-    private Connection connection;
-    private JdbcActionRepository actionRepository;
     private final static String CREATE_SCHEMA_IF_NOT_EXISTS_DOMAIN = "CREATE SCHEMA IF NOT EXISTS domain";
     private final static String CREATE_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS domain.user" +
             " (user_id SERIAL PRIMARY KEY, user_name VARCHAR(255),password varchar(255),balance decimal)";
     private final static String CREATE_TABLE_QUERY_TWO = "CREATE TABLE IF NOT EXISTS domain.action" +
             " (action_id SERIAL PRIMARY KEY, user_id bigint,activity VARCHAR(255))";
     private final static String INSERT = "INSERT INTO domain.user (user_name,password,balance) VALUES(?,?,?)";
+    private final static String NONE_EXIST_USER = "Иван";
+    private PostgreSQLContainer<?> container;
+    private Connection connection;
+    private JdbcActionRepository actionRepository;
 
     @BeforeEach
     public void setup() throws SQLException {
@@ -63,6 +64,7 @@ class TestContainersActionRepositoryTest {
         connection.close();
         container.stop();
     }
+
     @Test
     @DisplayName("Тест добавления активности")
     void testAddAction() {
@@ -72,6 +74,7 @@ class TestContainersActionRepositoryTest {
         List<Action> actions = actionRepository.getAllByUserName(user.getUserName());
         assertTrue(actions.contains(action));
     }
+
     @Test
     @DisplayName("Тест получения всех активностей по имени юзера")
     void testGetAllByUserName() {
@@ -81,7 +84,9 @@ class TestContainersActionRepositoryTest {
         actionRepository.addAction(action1);
         actionRepository.addAction(action2);
         List<Action> actions = actionRepository.getAllByUserName(user.getUserName());
-        assertEquals(2,actions.size());
+        assertEquals(2, actions.size());
+        assertThrows(NotFoundException.class, () -> actionRepository.getAllByUserName(NONE_EXIST_USER));
     }
+
 }
 
