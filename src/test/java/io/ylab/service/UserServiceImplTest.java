@@ -3,8 +3,8 @@ package io.ylab.service;
 import io.ylab.Utils;
 import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.transaction.TransactionRepository;
+import io.ylab.dao.user.UserRepository;
 import io.ylab.model.Action;
-import io.ylab.model.Activity;
 import io.ylab.model.Transaction;
 import io.ylab.model.User;
 import io.ylab.utils.ConsoleWriter;
@@ -30,6 +30,8 @@ class UserServiceImplTest {
     private ActionRepository actionRepository;
     @Mock
     ConsoleWriter consoleWriter;
+    @Mock
+    UserRepository userRepository;
     @InjectMocks
     UserServiceImpl userService;
 
@@ -41,7 +43,7 @@ class UserServiceImplTest {
         boolean result = userService.debit(new BigDecimal("50"), user, transaction);
         assertEquals(new BigDecimal("50"), user.getBalance());
         Mockito.verify(transactionRepository).addTransaction(transaction);
-        Mockito.verify(actionRepository).addAction(new Action(user, Activity.DEBIT));
+        Mockito.verify(actionRepository).addAction(Utils.getDebitAction(user));
         assertTrue(result);
     }
 
@@ -53,7 +55,7 @@ class UserServiceImplTest {
         boolean result = userService.credit(new BigDecimal("50"), user, transaction);
         assertEquals(new BigDecimal("150"), user.getBalance());
         Mockito.verify(transactionRepository).addTransaction(transaction);
-        Mockito.verify(actionRepository).addAction(new Action(user, Activity.CREDIT));
+        Mockito.verify(actionRepository).addAction(Utils.getCreditAction(user));
         assertTrue(result);
     }
 
@@ -67,7 +69,7 @@ class UserServiceImplTest {
         Mockito.when(transactionRepository.getAllByUserName(user.getUserName())).thenReturn(transactions);
         List<Transaction> result = userService.history(user);
         Mockito.verify(transactionRepository).getAllByUserName(user.getUserName());
-        Mockito.verify(actionRepository).addAction(new Action(user, Activity.HISTORY));
+        Mockito.verify(actionRepository).addAction(Utils.getHistoryAction(user));
         assertEquals(transactions, result);
     }
 
@@ -76,8 +78,8 @@ class UserServiceImplTest {
     void testActivityMethod() {
         User user = Utils.getUser();
         List<Action> actions = new ArrayList<>();
-        actions.add(new Action(user, Activity.ENTERED));
-        actions.add(new Action(user, Activity.EXITED));
+        actions.add(Utils.getEnterAction(user));
+        actions.add(Utils.getExitAction(user));
         Mockito.when(actionRepository.getAllByUserName(user.getUserName())).thenReturn(actions);
         List<Action> result = userService.activity(user);
         Mockito.verify(actionRepository).getAllByUserName(user.getUserName());

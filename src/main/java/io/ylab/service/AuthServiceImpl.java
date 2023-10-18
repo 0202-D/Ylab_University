@@ -41,12 +41,16 @@ public class AuthServiceImpl implements AuthService {
             consoleWriter.print("Пользователь с таким именем уже существует!");
             return false;
         } else {
-            User newUser = new User();
-            newUser.setUserName(userName);
-            newUser.setPassword(password);
-            newUser.setBalance(new BigDecimal(0));
-            userRepository.addUser(newUser);
-            actionRepository.addAction(new Action(newUser, Activity.REGISTERED));
+            User newUser = User.builder()
+                    .userName(userName)
+                    .password(password)
+                    .balance(new BigDecimal(0))
+                    .build();
+            newUser = userRepository.addUser(newUser);
+            actionRepository.addAction(Action.builder()
+                    .user(newUser)
+                    .activity(Activity.REGISTERED)
+                    .build());
             consoleWriter.print("Вы зарегестрированы!");
             return true;
         }
@@ -74,7 +78,10 @@ public class AuthServiceImpl implements AuthService {
             return null;
         }
         consoleWriter.print("Вы вошли");
-        actionRepository.addAction(new Action(user.get(), Activity.ENTERED));
+        actionRepository.addAction(Action.builder()
+                .user(user.get())
+                .activity(Activity.ENTERED)
+                .build());
         return user.get();
     }
 

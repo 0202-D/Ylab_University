@@ -9,11 +9,11 @@ public class AuthController {
 
     private final AuthService authService;
 
-    public void addUser(){
+    public void addUser() {
         authService.addUser();
     }
 
-    public User authenticateUser(){
-       return authService.authenticateUser();
+    public User authenticateUser() {
+        return authService.authenticateUser();
     }
 }

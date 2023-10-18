@@ -4,6 +4,7 @@ import io.ylab.model.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,6 @@ public class TransactionInMemoryRepository implements TransactionRepository {
     @Override
     public Optional<Transaction> getById(Long transactionId) {
         return transactions
-                .stream().filter(el -> el.getTransactionId() == transactionId).findFirst();
+                .stream().filter(el -> Objects.equals(el.getTransactionId(), transactionId)).findFirst();
     }
 }
