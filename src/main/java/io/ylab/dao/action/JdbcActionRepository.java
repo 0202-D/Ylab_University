@@ -6,7 +6,7 @@ import io.ylab.exception.NotFoundException;
 import io.ylab.model.Action;
 import io.ylab.model.Activity;
 import io.ylab.model.User;
-import io.ylab.utils.DataBaseConnector;
+import io.ylab.utils.HikariCPDataSource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,11 +22,11 @@ public class JdbcActionRepository implements ActionRepository {
             " INNER JOIN domain.user u ON a.user_id = u.user_id" +
             " WHERE u.user_name = ?";
     private final UserRepository userRepository = new JdbcUserRepository();
-    Connection connection = DataBaseConnector.getConnection();
+
 
     @Override
     public void addAction(Action action) {
-        try (PreparedStatement statement =
+        try (Connection connection = HikariCPDataSource.getConnection();PreparedStatement statement =
                      connection.prepareStatement(INSERT_QUERY)) {
             statement.setLong(1, action.getUser().getUserId());
             statement.setString(2, action.getActivity().toString());
@@ -41,7 +41,7 @@ public class JdbcActionRepository implements ActionRepository {
         List<Action> actions = new ArrayList<>();
         User user = userRepository.getByName(userName)
                 .orElseThrow(() -> new NotFoundException("Такого пользователя не существует"));
-        try (PreparedStatement statement = connection.prepareStatement(GET_QUERY)) {
+        try (Connection connection = HikariCPDataSource.getConnection();PreparedStatement statement = connection.prepareStatement(GET_QUERY)) {
             statement.setString(1, userName);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {

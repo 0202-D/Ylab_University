@@ -2,7 +2,7 @@ package io.ylab.dao.user;
 
 import io.ylab.exception.NotFoundException;
 import io.ylab.model.User;
-import io.ylab.utils.DataBaseConnector;
+import io.ylab.utils.HikariCPDataSource;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -16,12 +16,11 @@ public class JdbcUserRepository implements UserRepository {
     private static final String GET_BY_NAME_QUERY = "SELECT u.* from domain.user u where u.user_name = ?";
     private static final String GET_BY_ID_QUERY = "SELECT u.* from domain.user u where u.user_id = ?";
     private static final String UPDATE_QUERY = "UPDATE domain.user SET balance = ? WHERE user_id = ?";
-    Connection connection = DataBaseConnector.getConnection();
 
     @Override
     public User addUser(User user) {
-        try (PreparedStatement statement =
-                     connection.prepareStatement(INSERT_QUERY)) {
+        try (Connection connection = HikariCPDataSource.getConnection(); PreparedStatement statement =
+                connection.prepareStatement(INSERT_QUERY)) {
             statement.setString(1, user.getUserName());
             statement.setString(2, user.getPassword());
             statement.setBigDecimal(3, user.getBalance());
@@ -36,8 +35,8 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public Optional<User> getByName(String name) {
         User user = new User();
-        try (PreparedStatement statement =
-                     connection.prepareStatement(GET_BY_NAME_QUERY)) {
+        try (Connection connection = HikariCPDataSource.getConnection(); PreparedStatement statement =
+                connection.prepareStatement(GET_BY_NAME_QUERY)) {
             statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -58,8 +57,8 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public Optional<User> getById(Long id) {
         User user = new User();
-        try (PreparedStatement statement =
-                     connection.prepareStatement(GET_BY_ID_QUERY)) {
+        try (Connection connection = HikariCPDataSource.getConnection(); PreparedStatement statement =
+                connection.prepareStatement(GET_BY_ID_QUERY)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -79,7 +78,7 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public void updateBalance(long userId, BigDecimal balance) {
-        try (PreparedStatement statement =
+        try (Connection connection = HikariCPDataSource.getConnection();PreparedStatement statement =
                      connection.prepareStatement(UPDATE_QUERY)) {
             statement.setBigDecimal(1, balance);
             statement.setLong(2, userId);
