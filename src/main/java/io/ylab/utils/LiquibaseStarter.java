@@ -1,6 +1,5 @@
 package io.ylab.utils;
 
-import io.ylab.WalletService;
 import liquibase.Liquibase;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
@@ -13,8 +12,10 @@ import java.util.Properties;
 
 public class LiquibaseStarter {
     public Liquibase createLiquibase() throws Exception {
+        Class.forName("org.postgresql.Driver");
         Properties liquibaseProps = new Properties();
-        try (InputStream inputStream = WalletService.class.getClassLoader().getResourceAsStream("liquibase.properties")) {
+        try (InputStream inputStream = getClass().getClassLoader()
+                .getResourceAsStream("liquibase.properties")) {
             liquibaseProps.load(inputStream);
         }
         String url = liquibaseProps.getProperty("url");

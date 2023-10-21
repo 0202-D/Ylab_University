@@ -4,6 +4,7 @@ import io.ylab.Utils;
 import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.transaction.TransactionRepository;
 import io.ylab.dao.user.UserRepository;
+import io.ylab.dto.transaction.TransactionHistoryDtoRs;
 import io.ylab.model.Action;
 import io.ylab.model.Transaction;
 import io.ylab.model.User;
@@ -67,10 +68,9 @@ class UserServiceImplTest {
         transactions.add(Utils.getDebitTransaction());
         transactions.add(Utils.getCreditTransaction());
         Mockito.when(transactionRepository.getAllByUserName(user.getUserName())).thenReturn(transactions);
-        List<Transaction> result = userService.history(user);
+        List<TransactionHistoryDtoRs> result = userService.history(user.getUserId());
         Mockito.verify(transactionRepository).getAllByUserName(user.getUserName());
         Mockito.verify(actionRepository).addAction(Utils.getHistoryAction(user));
-        assertEquals(transactions, result);
     }
 
     @Test

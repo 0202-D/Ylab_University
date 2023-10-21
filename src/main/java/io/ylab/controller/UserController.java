@@ -1,5 +1,7 @@
 package io.ylab.controller;
 
+import io.ylab.dto.transaction.TransactionHistoryDtoRs;
+import io.ylab.dto.transaction.UserBalanceRs;
 import io.ylab.service.UserService;
 import io.ylab.model.Action;
 import io.ylab.model.Transaction;
@@ -13,8 +15,8 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    public void balance(User user) {
-        userService.balance(user);
+    public UserBalanceRs balance(long userid) {
+        return userService.balance(userid);
     }
 
     public boolean debit(BigDecimal sum, User user, Transaction transaction) {
@@ -25,8 +27,8 @@ public class UserController {
         return userService.credit(sum, user, transaction);
     }
 
-    public List<Transaction> history(User user) {
-        return userService.history(user);
+    public List<TransactionHistoryDtoRs> history(long userId) {
+        return userService.history(userId);
     }
 
     public List<Action> activity(User currentUser) {

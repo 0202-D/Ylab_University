@@ -3,41 +3,50 @@ package io.ylab.service;
 import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.transaction.TransactionRepository;
 import io.ylab.dao.user.UserRepository;
+import io.ylab.dto.transaction.TransactionHistoryDtoRs;
+import io.ylab.dto.transaction.UserBalanceRs;
+import io.ylab.mapper.transaction.TransactionMapper;
 import io.ylab.model.Action;
 import io.ylab.model.Activity;
 import io.ylab.model.Transaction;
 import io.ylab.model.User;
-import io.ylab.utils.ConsoleWriter;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Реализация интерфейса UserService, предоставляющая функциональность работы с балансом пользователей и их транзакциями.
  */
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-
     private final TransactionRepository transactionRepository;
-
     private final UserRepository userRepository;
-
     private final ActionRepository actionRepository;
 
-    private final ConsoleWriter consoleWriter;
+    private final TransactionMapper transactionMapper = Mappers.getMapper(TransactionMapper.class);
 
     /**
      * Метод для получения баланса пользователя.
      *
-     * @param user - объект пользователя, для которого нужно получить баланс.
+     * @param userId - id пользователя, для которого нужно получить баланс.
      */
     @Override
-    public void balance(User user) {
-        BigDecimal balance = userRepository.getById(user.getUserId()).get().getBalance();
-        consoleWriter.printBalance(balance);
-        actionRepository.addAction(new Action(1L, user, Activity.BALANCE));
+    public UserBalanceRs balance(long userId) {
+        var user = userRepository.getById(userId);
+        if (!user.isPresent()) {
+            return null;
+        } else {
+            var findUser = user.get();
+            actionRepository.addAction(new Action(1L, findUser, Activity.BALANCE));
+            return UserBalanceRs.builder()
+                    .userName(findUser.getUserName())
+                    .balance(findUser.getBalance())
+                    .build();
+        }
     }
 
     /**
@@ -52,7 +61,6 @@ public class UserServiceImpl implements UserService {
     public boolean debit(BigDecimal sum, User user, Transaction transaction) {
         if (validate(sum, transaction)) return false;
         if (user.getBalance().compareTo(sum) < 0) {
-            consoleWriter.print("Средств недостаточно");
             return false;
         } else {
             user.setBalance(user.getBalance().subtract(sum));
@@ -73,12 +81,10 @@ public class UserServiceImpl implements UserService {
      */
     private boolean validate(BigDecimal sum, Transaction transaction) {
         if (sum.compareTo(BigDecimal.ZERO) < 0) {
-            consoleWriter.print("Вы ввели отрицательное число");
             return true;
         }
         Optional<Transaction> transactionInRepo = transactionRepository.getById(transaction.getTransactionId());
         if (transactionInRepo.isPresent()) {
-            consoleWriter.print("Транзакция с таким id была проведена");
             return true;
         }
         return false;
@@ -105,14 +111,19 @@ public class UserServiceImpl implements UserService {
     /**
      * Метод для получения списка транзакций пользователя.
      *
-     * @param user - объект пользователя, для которого нужно получить список транзакций.
+     * @param userId - id пользователя, для которого нужно получить список транзакций.
      * @return список транзакций пользователя.
      */
     @Override
-    public List<Transaction> history(User user) {
-        List<Transaction> transactions = transactionRepository.getAllByUserName(user.getUserName());
-        actionRepository.addAction(new Action(1L, user, Activity.HISTORY));
-        return transactions;
+    public List<TransactionHistoryDtoRs> history(long userId) {
+        var user = userRepository.getById(userId);
+        if(!user.isPresent()){
+            return null;
+        }
+        var findUser = user.get();
+        List<Transaction> transactions = transactionRepository.getAllByUserName(findUser.getUserName());
+        actionRepository.addAction(new Action(1L, findUser, Activity.HISTORY));
+        return transactions.stream().map(transactionMapper::toDtoRs).collect(Collectors.toList());
     }
 
     /**
