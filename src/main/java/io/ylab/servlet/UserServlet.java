@@ -9,6 +9,8 @@ import io.ylab.dao.transaction.JdbcTransactionRepository;
 import io.ylab.dao.transaction.TransactionRepository;
 import io.ylab.dao.user.JdbcUserRepository;
 import io.ylab.dao.user.UserRepository;
+import io.ylab.dto.activity.ActivityRs;
+import io.ylab.dto.transaction.CreditAndDebitRs;
 import io.ylab.dto.transaction.TransactionHistoryDtoRs;
 import io.ylab.dto.transaction.UserBalanceRs;
 import io.ylab.exception.ExceptionJson;
@@ -24,15 +26,13 @@ import java.io.IOException;
 import java.util.List;
 
 public class UserServlet extends HttpServlet {
-
+    public static final String APPLICATION_JSON = "application/json";
     private static final String NOT_FOUND = "Такого пользователя не существует";
     private final ObjectMapper objectMapper;
     private final ActionRepository actionRepository;
     private final UserRepository userRepository;
     private final UserController userController;
-
     private final TransactionRepository transactionRepository;
-
     private final UserService userService;
 
     public UserServlet() {
@@ -59,7 +59,7 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String requestURI = req.getRequestURI();
-        if (requestURI.contains("/user/balance")) {
+        if (requestURI.contains("user/balance")) {
             long userId = getUserId(req);
             UserBalanceRs userBalanceRs = userController.balance(userId);
             if (userBalanceRs == null) {
@@ -67,10 +67,12 @@ public class UserServlet extends HttpServlet {
                         .message(NOT_FOUND)
                         .httpResponse(HttpServletResponse.SC_NOT_FOUND)
                         .build();
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                resp.setContentType(APPLICATION_JSON);
                 resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(exceptionJson));
             } else {
                 resp.setStatus(HttpServletResponse.SC_OK);
-                resp.setContentType("application/json");
+                resp.setContentType(APPLICATION_JSON);
                 resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(userBalanceRs));
             }
         } else if (requestURI.contains("/user/history/")) {
@@ -81,24 +83,73 @@ public class UserServlet extends HttpServlet {
                         .message(NOT_FOUND)
                         .httpResponse(HttpServletResponse.SC_NOT_FOUND)
                         .build();
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                resp.setContentType(APPLICATION_JSON);
                 resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(exceptionJson));
+            } else {
                 resp.setStatus(HttpServletResponse.SC_OK);
-                resp.setContentType("application/json");
+                resp.setContentType(APPLICATION_JSON);
                 resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(history));
             }
         } else if (requestURI.contains("/user/activity")) {
-            // Обработка других путей
-            // ...
-        } else {
-
+            long userId = getUserId(req);
+            List<ActivityRs> activity = userController.activity(userId);
+            if (activity == null) {
+                ExceptionJson exceptionJson = ExceptionJson.builder()
+                        .message(NOT_FOUND)
+                        .httpResponse(HttpServletResponse.SC_NOT_FOUND)
+                        .build();
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                resp.setContentType(APPLICATION_JSON);
+                resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(exceptionJson));
+            } else {
+                resp.setStatus(HttpServletResponse.SC_OK);
+                resp.setContentType(APPLICATION_JSON);
+                resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(activity));
+            }
         }
+    }
 
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String requestURI = req.getRequestURI();
+        if (requestURI.contains("/user/credit")) {
+            boolean isOk = userController.credit(req.getReader(), resp);
+            if (!isOk) {
+                CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
+                        .httpResponse(HttpServletResponse.SC_BAD_REQUEST).build();
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.setContentType(APPLICATION_JSON);
+                resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+            } else {
+                CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
+                        .httpResponse(HttpServletResponse.SC_OK).build();
+                resp.setContentType(APPLICATION_JSON);
+                resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+            }
+        }
+        if (requestURI.contains("/user/debit")) {
+            boolean isOk = userController.debit(req.getReader(), resp);
+            if (!isOk) {
+                CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
+                        .httpResponse(HttpServletResponse.SC_BAD_REQUEST).build();
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.setContentType(APPLICATION_JSON);
+                resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+            } else {
+                CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
+                        .httpResponse(HttpServletResponse.SC_OK).build();
+                resp.setContentType(APPLICATION_JSON);
+                resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+            }
+        }
     }
 
     private static long getUserId(HttpServletRequest req) {
         String pathInfo = req.getPathInfo();
-        String id = pathInfo.substring(pathInfo.length() - 1);
-        long userId = Long.parseLong(id);
+        int lastIndexOfSlash = pathInfo.lastIndexOf('/');
+        String pathVarible = pathInfo.substring(lastIndexOfSlash + 1);
+        long userId = Long.parseLong(pathVarible);
         return userId;
     }
 

@@ -1,37 +1,45 @@
 package io.ylab.controller;
 
+import com.google.gson.Gson;
+import io.ylab.dto.activity.ActivityRs;
+import io.ylab.dto.transaction.CreditRq;
 import io.ylab.dto.transaction.TransactionHistoryDtoRs;
 import io.ylab.dto.transaction.UserBalanceRs;
 import io.ylab.service.UserService;
-import io.ylab.model.Action;
-import io.ylab.model.Transaction;
-import io.ylab.model.User;
 import lombok.RequiredArgsConstructor;
 
-import java.math.BigDecimal;
+import javax.servlet.http.HttpServletResponse;
+import java.io.Reader;
 import java.util.List;
 
 @RequiredArgsConstructor
 public class UserController {
+    public static final String APPLICATION_JSON = "application/json";
     private final UserService userService;
 
     public UserBalanceRs balance(long userid) {
         return userService.balance(userid);
     }
 
-    public boolean debit(BigDecimal sum, User user, Transaction transaction) {
-        return userService.debit(sum, user, transaction);
+    public boolean debit(Reader body, HttpServletResponse resp) {
+        resp.setContentType(APPLICATION_JSON);
+        final var gson = new Gson();
+        final var creditRq = gson.fromJson(body, CreditRq.class);
+        return userService.debit(creditRq.getSum(), creditRq.getUserId());
     }
 
-    public boolean credit(BigDecimal sum, User user, Transaction transaction) {
-        return userService.credit(sum, user, transaction);
+    public boolean credit(Reader body, HttpServletResponse resp) {
+        resp.setContentType(APPLICATION_JSON);
+        final var gson = new Gson();
+        final var creditRq = gson.fromJson(body, CreditRq.class);
+        return userService.credit(creditRq.getSum(), creditRq.getUserId());
     }
 
     public List<TransactionHistoryDtoRs> history(long userId) {
         return userService.history(userId);
     }
 
-    public List<Action> activity(User currentUser) {
-        return userService.activity(currentUser);
+    public List<ActivityRs> activity(Long userId) {
+        return userService.activity(userId);
     }
 }

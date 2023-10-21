@@ -4,24 +4,24 @@ import io.ylab.Utils;
 import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.transaction.TransactionRepository;
 import io.ylab.dao.user.UserRepository;
+import io.ylab.dto.activity.ActivityRs;
 import io.ylab.dto.transaction.TransactionHistoryDtoRs;
-import io.ylab.model.Action;
-import io.ylab.model.Transaction;
-import io.ylab.model.User;
-import io.ylab.utils.ConsoleWriter;
+import io.ylab.dto.transaction.UserBalanceRs;
+import io.ylab.model.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -30,72 +30,88 @@ class UserServiceImplTest {
     @Mock
     private ActionRepository actionRepository;
     @Mock
-    ConsoleWriter consoleWriter;
-    @Mock
     UserRepository userRepository;
     @InjectMocks
     UserServiceImpl userService;
 
     @Test
-    @DisplayName("Тест метода снятия со счетв")
-    void testDebitMethodSuccess() {
+    @DisplayName("Тест метода получения баланса")
+    void testBalanceValidUserId() {
         User user = Utils.getUser();
-        Transaction transaction = Utils.getDebitTransaction();
-        boolean result = userService.debit(new BigDecimal("50"), user, transaction);
-        assertEquals(new BigDecimal("50"), user.getBalance());
-        Mockito.verify(transactionRepository).addTransaction(transaction);
-        Mockito.verify(actionRepository).addAction(Utils.getDebitAction(user));
+        long userId = user.getUserId();
+        when(userRepository.getById(userId)).thenReturn(Optional.of(user));
+        UserBalanceRs result = userService.balance(userId);
+        assertNotNull(result);
+        assertEquals("username", result.getUserName());
+        assertEquals(BigDecimal.valueOf(100), result.getBalance());
+    }
+
+    @Test
+    @DisplayName("Тест снятия средств")
+    void testDebitValidSumAndUserIdWithSufficientBalance() {
+        BigDecimal sum = BigDecimal.valueOf(50);
+        User user = Utils.getUser();
+        long userId = user.getUserId();
+        when(userRepository.getById(userId)).thenReturn(Optional.of(user));
+        boolean result = userService.debit(sum, userId);
         assertTrue(result);
+        assertEquals(BigDecimal.valueOf(50), user.getBalance());
+        verify(transactionRepository, times(1)).addTransaction(any(Transaction.class));
+        verify(actionRepository, times(1)).addAction(any(Action.class));
     }
 
     @Test
-    @DisplayName("Тест метода пополнения счетв")
-    void testCreditMethodSuccess() {
+    @DisplayName("Тест метода пополнения счета")
+    void testCreditValidSumAndUserId() {
         User user = Utils.getUser();
-        Transaction transaction = Utils.getCreditTransaction();
-        boolean result = userService.credit(new BigDecimal("50"), user, transaction);
-        assertEquals(new BigDecimal("150"), user.getBalance());
-        Mockito.verify(transactionRepository).addTransaction(transaction);
-        Mockito.verify(actionRepository).addAction(Utils.getCreditAction(user));
+        long userId = user.getUserId();
+        BigDecimal sum = BigDecimal.valueOf(50);
+        when(userRepository.getById(userId)).thenReturn(Optional.of(user));
+        boolean result = userService.credit(sum, userId);
         assertTrue(result);
+        assertEquals(BigDecimal.valueOf(150), user.getBalance());
+        verify(transactionRepository, times(1)).addTransaction(any(Transaction.class));
+        verify(actionRepository, times(1)).addAction(any(Action.class));
+    }
+    @Test
+    @DisplayName("Тест метода получения истории")
+     void testHistoryValidUserId() {
+        User user = Utils.getUser();
+        long userId = user.getUserId();
+        List<Transaction> transactions = Arrays.asList(
+               Utils.getCreditTransaction(),
+              Utils.getDebitTransaction()
+        );
+        when(userRepository.getById(userId)).thenReturn(Optional.of(user));
+        when(transactionRepository.getAllByUserName("username")).thenReturn(transactions);
+        List<TransactionHistoryDtoRs> result = userService.history(userId);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(BigDecimal.valueOf(50), result.get(0).getSum());
+        assertEquals(userId, result.get(0).getUserId());
+        assertEquals(TransactionalType.DEBIT, result.get(1).getTransactionalType());
+        assertEquals(userId, result.get(1).getUserId());
+    }
+    @Test
+    @DisplayName("Тест получения активностей")
+    void testActivityValidUserId() {
+        User user = Utils.getUser();
+        long userId = user.getUserId();
+        List<Action> actions = Arrays.asList(
+                Utils.getEnterAction(user),
+                Utils.getExitAction(user)
+        );
+        when(userRepository.getById(userId)).thenReturn(Optional.of(user));
+        when(actionRepository.getAllByUserName("username")).thenReturn(actions);
+        List<ActivityRs> result = userService.activity(userId);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(5L, result.get(0).getActionId());
+        assertEquals(userId, result.get(0).getUserId());
+        assertEquals(Activity.ENTERED, result.get(0).getActivity());
+        assertEquals(3L, result.get(1).getActionId());
+        assertEquals(userId, result.get(1).getUserId());
+        assertEquals(Activity.EXITED, result.get(1).getActivity());
     }
 
-    @Test
-    @DisplayName("Тест вывода истории")
-    void testHistoryMethod() {
-        User user = Utils.getUser();
-        List<Transaction> transactions = new ArrayList<>();
-        transactions.add(Utils.getDebitTransaction());
-        transactions.add(Utils.getCreditTransaction());
-        Mockito.when(transactionRepository.getAllByUserName(user.getUserName())).thenReturn(transactions);
-        List<TransactionHistoryDtoRs> result = userService.history(user.getUserId());
-        Mockito.verify(transactionRepository).getAllByUserName(user.getUserName());
-        Mockito.verify(actionRepository).addAction(Utils.getHistoryAction(user));
-    }
-
-    @Test
-    @DisplayName("Тест вывода активности")
-    void testActivityMethod() {
-        User user = Utils.getUser();
-        List<Action> actions = new ArrayList<>();
-        actions.add(Utils.getEnterAction(user));
-        actions.add(Utils.getExitAction(user));
-        Mockito.when(actionRepository.getAllByUserName(user.getUserName())).thenReturn(actions);
-        List<Action> result = userService.activity(user);
-        Mockito.verify(actionRepository).getAllByUserName(user.getUserName());
-        assertEquals(actions, result);
-    }
-
-    @Test
-    @DisplayName("Тест на негативный сценарий снятия со счета")
-    void testDebitMethodInsufficientBalance() {
-        User user = Utils.getUser();
-        Transaction transaction = Utils.getDebitTransaction();
-        boolean result = userService.debit(new BigDecimal("200"), user, transaction);
-        Mockito.verify(consoleWriter).print("Средств недостаточно");
-        Mockito.verify(actionRepository, Mockito.never()).addAction(Mockito.any(Action.class));
-        Mockito.verify(transactionRepository, Mockito.never()).addTransaction(Mockito.any(Transaction.class));
-        assertEquals(new BigDecimal("100"), user.getBalance());
-        assertFalse(result);
-    }
 }

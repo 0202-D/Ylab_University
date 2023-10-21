@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class TransactionGenerator {
     private static AtomicLong id = new AtomicLong(0);
-    public Transaction generateTransaction(TransactionalType transactionalType, BigDecimal sum, User user) {
+    public static Transaction generateTransaction(TransactionalType transactionalType, BigDecimal sum, User user) {
         return Transaction.builder()
                 .transactionId(id.incrementAndGet())
                 .transactionalType(transactionalType)

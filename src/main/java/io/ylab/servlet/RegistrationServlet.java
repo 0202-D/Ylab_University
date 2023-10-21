@@ -60,6 +60,8 @@ public class RegistrationServlet extends HttpServlet {
                     .message(BAD_REQUEST_MESSAGE)
                     .httpResponse(HttpServletResponse.SC_BAD_REQUEST)
                     .build();
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.setContentType("application/json");
             resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(exceptionJson));
         }
     }

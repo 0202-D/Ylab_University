@@ -14,10 +14,8 @@ import java.io.Reader;
 @RequiredArgsConstructor
 public class AuthController {
     public static final String APPLICATION_JSON = "application/json";
-
-    private UserMapper mapper = Mappers.getMapper(UserMapper.class);
+    private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
     private final AuthService authService;
-
 
     public UserDtoRs addUser(Reader body, HttpServletResponse resp) {
         resp.setContentType(APPLICATION_JSON);
@@ -41,6 +39,5 @@ public class AuthController {
             return null;
         }
         return mapper.toDtoRs(newUser);
-
     }
 }

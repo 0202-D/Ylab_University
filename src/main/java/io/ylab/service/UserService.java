@@ -1,10 +1,8 @@
 package io.ylab.service;
 
+import io.ylab.dto.activity.ActivityRs;
 import io.ylab.dto.transaction.TransactionHistoryDtoRs;
 import io.ylab.dto.transaction.UserBalanceRs;
-import io.ylab.model.Action;
-import io.ylab.model.Transaction;
-import io.ylab.model.User;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,11 +10,11 @@ import java.util.List;
 public interface UserService {
     UserBalanceRs balance(long userId);
 
-    boolean debit(BigDecimal sum, User user, Transaction transaction);
+    boolean debit(BigDecimal sum, long userId);
 
-    boolean credit(BigDecimal sum, User user, Transaction transaction);
+    boolean credit(BigDecimal sum, long userId);
 
     List<TransactionHistoryDtoRs> history(long userId);
 
-    List<Action> activity(User currentUser);
+    List<ActivityRs> activity(long userId);
 }

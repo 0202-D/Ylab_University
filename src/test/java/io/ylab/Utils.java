@@ -61,7 +61,7 @@ public class Utils {
     }
     public static Action getExitAction(User user){
         return Action.builder()
-                .actionId(5L)
+                .actionId(3L)
                 .activity(Activity.EXITED)
                 .user(user)
                 .build();
