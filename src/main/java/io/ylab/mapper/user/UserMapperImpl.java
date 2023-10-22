@@ -18,7 +18,7 @@ public class UserMapperImpl implements UserMapper {
     @Override
     public User toEntity(UserDtoRq userDto) {
         return User.builder()
-                .userName(userDto.getName())
+                .userName(userDto.getUserName())
                 .password(userDto.getPassword())
                 .build();
 

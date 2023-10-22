@@ -39,7 +39,7 @@
         <!-- Создание таблицы transaction -->
         <createTable tableName="transaction" schemaName="domain">
             <column name="transaction_id" type="BIGINT" autoIncrement="true" >
-                <constraints primaryKey="true" nullable="false" unique="true"/>
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="transactional_type" type="VARCHAR(50)"/>
             <column name="sum" type="DECIMAL"/>

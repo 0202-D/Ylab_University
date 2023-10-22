@@ -2,6 +2,7 @@ package io.ylab.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.gson.Gson;
 import io.ylab.controller.UserController;
 import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.action.JdbcActionRepository;
@@ -11,6 +12,7 @@ import io.ylab.dao.user.JdbcUserRepository;
 import io.ylab.dao.user.UserRepository;
 import io.ylab.dto.activity.ActivityRs;
 import io.ylab.dto.transaction.CreditAndDebitRs;
+import io.ylab.dto.transaction.CreditAndDebitRq;
 import io.ylab.dto.transaction.TransactionHistoryDtoRs;
 import io.ylab.dto.transaction.UserBalanceRs;
 import io.ylab.exception.ExceptionJson;
@@ -22,8 +24,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class UserServlet extends HttpServlet {
     public static final String APPLICATION_JSON = "application/json";
@@ -34,6 +42,8 @@ public class UserServlet extends HttpServlet {
     private final UserController userController;
     private final TransactionRepository transactionRepository;
     private final UserService userService;
+
+    private Validator validator;
 
     public UserServlet() {
         this.objectMapper = new ObjectMapper();
@@ -51,6 +61,8 @@ public class UserServlet extends HttpServlet {
         try {
             LiquibaseStarter liquibaseStarter = new LiquibaseStarter();
             liquibaseStarter.createLiquibase();
+            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+            validator = factory.getValidator();
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -114,33 +126,69 @@ public class UserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String requestURI = req.getRequestURI();
         if (requestURI.contains("/user/credit")) {
-            boolean isOk = userController.credit(req.getReader(), resp);
-            if (!isOk) {
-                CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
-                        .httpResponse(HttpServletResponse.SC_BAD_REQUEST).build();
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.setContentType(APPLICATION_JSON);
-                resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+            resp.setContentType(APPLICATION_JSON);
+            final var gson = new Gson();
+            var body = req.getReader();
+            final var creditRq = gson.fromJson(body, CreditAndDebitRq.class);
+            Set<ConstraintViolation<CreditAndDebitRq>> violations = validator.validate(creditRq);
+            if (!violations.isEmpty()) {
+                List<String> errors = new ArrayList<>();
+                for (ConstraintViolation<CreditAndDebitRq> violation : violations) {
+                    resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    ExceptionJson exceptionJson = ExceptionJson.builder()
+                            .message(violation.getMessage())
+                            .httpResponse(HttpServletResponse.SC_BAD_REQUEST)
+                            .build();
+                    resp.setContentType(APPLICATION_JSON);
+                    resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(exceptionJson));
+                }
             } else {
-                CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
-                        .httpResponse(HttpServletResponse.SC_OK).build();
-                resp.setContentType(APPLICATION_JSON);
-                resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+                boolean isOk = userController.credit(creditRq);
+                if (!isOk) {
+                    CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
+                            .httpResponse(HttpServletResponse.SC_BAD_REQUEST).build();
+                    resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    resp.setContentType(APPLICATION_JSON);
+                    resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+                } else {
+                    CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
+                            .httpResponse(HttpServletResponse.SC_OK).build();
+                    resp.setContentType(APPLICATION_JSON);
+                    resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+                }
             }
         }
         if (requestURI.contains("/user/debit")) {
-            boolean isOk = userController.debit(req.getReader(), resp);
-            if (!isOk) {
-                CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
-                        .httpResponse(HttpServletResponse.SC_BAD_REQUEST).build();
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.setContentType(APPLICATION_JSON);
-                resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+            resp.setContentType(APPLICATION_JSON);
+            final var gson = new Gson();
+            var body = req.getReader();
+            final var debitRq = gson.fromJson(body, CreditAndDebitRq.class);
+            Set<ConstraintViolation<CreditAndDebitRq>> violations = validator.validate(debitRq);
+            if (!violations.isEmpty()) {
+                List<String> errors = new ArrayList<>();
+                for (ConstraintViolation<CreditAndDebitRq> violation : violations) {
+                    resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    ExceptionJson exceptionJson = ExceptionJson.builder()
+                            .message(violation.getMessage())
+                            .httpResponse(HttpServletResponse.SC_BAD_REQUEST)
+                            .build();
+                    resp.setContentType(APPLICATION_JSON);
+                    resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(exceptionJson));
+                }
             } else {
-                CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
-                        .httpResponse(HttpServletResponse.SC_OK).build();
-                resp.setContentType(APPLICATION_JSON);
-                resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+                boolean isOk = userController.debit(debitRq);
+                if (!isOk) {
+                    CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
+                            .httpResponse(HttpServletResponse.SC_BAD_REQUEST).build();
+                    resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    resp.setContentType(APPLICATION_JSON);
+                    resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+                } else {
+                    CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
+                            .httpResponse(HttpServletResponse.SC_OK).build();
+                    resp.setContentType(APPLICATION_JSON);
+                    resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+                }
             }
         }
     }
