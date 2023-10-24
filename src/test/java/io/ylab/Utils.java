@@ -1,5 +1,6 @@
 package io.ylab;
 
+import io.ylab.dto.user.UserDtoRs;
 import io.ylab.model.*;
 
 import java.math.BigDecimal;
@@ -12,6 +13,14 @@ public class Utils {
                 .password("password")
                 .balance(new BigDecimal(100))
                 .build();
+    }
+
+    public static UserDtoRs getUserDtoRs() {
+        return UserDtoRs.builder()
+                .userName("username")
+                .userId(1L)
+                .balance(new BigDecimal(100)).
+                build();
     }
 
     public static Transaction getDebitTransaction() {
@@ -31,35 +40,40 @@ public class Utils {
                 .user(getUser())
                 .build();
     }
-    public static Action getHistoryAction(User user){
+
+    public static Action getHistoryAction(User user) {
         return Action.builder()
                 .actionId(1L)
                 .activity(Activity.HISTORY)
                 .user(user)
                 .build();
     }
-    public static Action getCreditAction(User user){
+
+    public static Action getCreditAction(User user) {
         return Action.builder()
                 .actionId(2L)
                 .activity(Activity.CREDIT)
                 .user(user)
                 .build();
     }
-    public static Action getDebitAction(User user){
+
+    public static Action getDebitAction(User user) {
         return Action.builder()
                 .actionId(3L)
                 .activity(Activity.DEBIT)
                 .user(user)
                 .build();
     }
-    public static Action getEnterAction(User user){
+
+    public static Action getEnterAction(User user) {
         return Action.builder()
                 .actionId(5L)
                 .activity(Activity.ENTERED)
                 .user(user)
                 .build();
     }
-    public static Action getExitAction(User user){
+
+    public static Action getExitAction(User user) {
         return Action.builder()
                 .actionId(3L)
                 .activity(Activity.EXITED)

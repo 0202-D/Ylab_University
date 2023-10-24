@@ -14,6 +14,7 @@ public class UserController {
     public static final String APPLICATION_JSON = "application/json";
     private final UserService userService;
 
+
     public UserBalanceRs balance(long userid) {
         return userService.balance(userid);
     }

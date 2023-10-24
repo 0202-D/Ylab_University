@@ -13,6 +13,6 @@ import java.math.BigDecimal;
 @Builder
 public class UserDtoRs {
     private long userId;
-    private  String name;
+    private  String userName;
     private  BigDecimal balance;
 }

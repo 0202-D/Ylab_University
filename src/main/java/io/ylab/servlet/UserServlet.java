@@ -11,11 +11,12 @@ import io.ylab.dao.transaction.TransactionRepository;
 import io.ylab.dao.user.JdbcUserRepository;
 import io.ylab.dao.user.UserRepository;
 import io.ylab.dto.activity.ActivityRs;
-import io.ylab.dto.transaction.CreditAndDebitRs;
 import io.ylab.dto.transaction.CreditAndDebitRq;
+import io.ylab.dto.transaction.CreditAndDebitRs;
 import io.ylab.dto.transaction.TransactionHistoryDtoRs;
 import io.ylab.dto.transaction.UserBalanceRs;
 import io.ylab.exception.ExceptionJson;
+import io.ylab.security.JwtProvider;
 import io.ylab.service.UserService;
 import io.ylab.service.UserServiceImpl;
 import io.ylab.utils.LiquibaseStarter;
@@ -36,6 +37,7 @@ import java.util.Set;
 public class UserServlet extends HttpServlet {
     public static final String APPLICATION_JSON = "application/json";
     private static final String NOT_FOUND = "Такого пользователя не существует";
+    private JwtProvider jwtProvider = new JwtProvider();
     private final ObjectMapper objectMapper;
     private final ActionRepository actionRepository;
     private final UserRepository userRepository;
@@ -70,6 +72,7 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        jwtProvider.validateJwtToken(req);
         String requestURI = req.getRequestURI();
         if (requestURI.contains("user/balance")) {
             long userId = getUserId(req);
@@ -124,6 +127,7 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        jwtProvider.validateJwtToken(req);
         String requestURI = req.getRequestURI();
         if (requestURI.contains("/user/credit")) {
             resp.setContentType(APPLICATION_JSON);

@@ -9,7 +9,7 @@ public class UserMapperImpl implements UserMapper {
     public UserDtoRs toDtoRs(User user) {
         return UserDtoRs.builder()
                 .userId(user.getUserId())
-                .name(user.getUserName())
+                .userName(user.getUserName())
                 .balance(user.getBalance())
                 .build();
     }

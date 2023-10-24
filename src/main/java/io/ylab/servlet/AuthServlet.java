@@ -11,6 +11,7 @@ import io.ylab.dao.user.UserRepository;
 import io.ylab.dto.user.UserDtoRq;
 import io.ylab.exception.ExceptionJson;
 import io.ylab.mapper.user.UserMapper;
+import io.ylab.security.JwtProvider;
 import io.ylab.service.AuthService;
 import io.ylab.service.AuthServiceImpl;
 import io.ylab.utils.LiquibaseStarter;
@@ -41,6 +42,8 @@ public class AuthServlet extends HttpServlet {
     private final AuthService authService;
     private Validator validator;
 
+    private JwtProvider jwtProvider;
+
 
     public AuthServlet() {
         this.objectMapper = new ObjectMapper();
@@ -49,11 +52,11 @@ public class AuthServlet extends HttpServlet {
         this.userRepository = new JdbcUserRepository();
         this.authService = new AuthServiceImpl(userRepository, actionRepository);
         this.authController = new AuthController(authService);
+        this.jwtProvider = new JwtProvider();
     }
 
     @Override
     public void init() throws ServletException {
-
         super.init();
         try {
             LiquibaseStarter liquibaseStarter = new LiquibaseStarter();
@@ -87,8 +90,10 @@ public class AuthServlet extends HttpServlet {
             var user = mapper.toEntity(userDto);
             var userDtoRs = authController.authenticateUser(user);
             if (userDtoRs != null) {
+                String token = jwtProvider.generateAccessJwtToken(userDtoRs);
                 resp.setStatus(HttpServletResponse.SC_OK);
                 resp.setContentType(APPLICATION_JSON);
+                resp.addHeader("Authorization", "Bearer " + token);
                 resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(userDtoRs));
             } else {
                 ExceptionJson exceptionJson = ExceptionJson.builder()
