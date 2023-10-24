@@ -133,6 +133,11 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
                 <version>1.14.0</version>
@@ -143,10 +148,7 @@
                     <showWeaveInfo>true</showWeaveInfo>
                     <verbose>true</verbose>
                     <Xlint>ignore</Xlint>
-                    <encoding>UTF-8</encoding>
-                    <weaveDirectories>
-                        <weaveDirectory>${project.build.directory}/generated-sources/delombok</weaveDirectory>
-                    </weaveDirectories>
+                    <encoding>UTF-8 </encoding>
                 </configuration>
                 <executions>
                     <execution>
@@ -155,13 +157,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.projectlombok</groupId>
-                        <artifactId>lombok</artifactId>
-                        <version>1.18.30</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
