@@ -19,7 +19,6 @@ import io.ylab.exception.ExceptionJson;
 import io.ylab.security.JwtProvider;
 import io.ylab.service.UserService;
 import io.ylab.service.UserServiceImpl;
-import io.ylab.utils.LiquibaseStarter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -61,8 +60,6 @@ public class UserServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         try {
-            LiquibaseStarter liquibaseStarter = new LiquibaseStarter();
-            liquibaseStarter.createLiquibase();
             ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
             validator = factory.getValidator();
         } catch (Exception e) {

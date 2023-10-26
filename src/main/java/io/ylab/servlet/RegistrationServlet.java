@@ -13,7 +13,6 @@ import io.ylab.exception.ExceptionJson;
 import io.ylab.mapper.user.UserMapper;
 import io.ylab.service.AuthService;
 import io.ylab.service.AuthServiceImpl;
-import io.ylab.utils.LiquibaseStarter;
 import org.mapstruct.factory.Mappers;
 
 import javax.servlet.ServletException;
@@ -56,8 +55,6 @@ public class RegistrationServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         try {
-            LiquibaseStarter liquibaseStarter = new LiquibaseStarter();
-            liquibaseStarter.createLiquibase();
             ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
             validator = factory.getValidator();
         } catch (Exception e) {
