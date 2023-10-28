@@ -3,9 +3,9 @@ package io.ylab.service;
 import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.transaction.TransactionRepository;
 import io.ylab.dao.user.UserRepository;
-import io.ylab.dto.activity.ActivityRs;
-import io.ylab.dto.transaction.TransactionHistoryDtoRs;
-import io.ylab.dto.transaction.UserBalanceRs;
+import io.ylab.dto.activity.ActivityRsDto;
+import io.ylab.dto.transaction.TransactionHistoryRsDto;
+import io.ylab.dto.transaction.UserBalanceRsDto;
 import io.ylab.mapper.action.ActionMapper;
 import io.ylab.mapper.transaction.TransactionMapper;
 import io.ylab.model.Action;
@@ -38,14 +38,14 @@ public class UserServiceImpl implements UserService {
      * @param userId - id пользователя, для которого нужно получить баланс.
      */
     @Override
-    public UserBalanceRs balance(long userId) {
+    public UserBalanceRsDto balance(long userId) {
         var user = userRepository.getById(userId);
         if (!user.isPresent()) {
             return null;
         } else {
             var findUser = user.get();
             actionRepository.addAction(new Action(1L, findUser, Activity.BALANCE));
-            return UserBalanceRs.builder()
+            return UserBalanceRsDto.builder()
                     .userName(findUser.getUserName())
                     .balance(findUser.getBalance())
                     .build();
@@ -130,7 +130,7 @@ public class UserServiceImpl implements UserService {
      * @return список транзакций пользователя.
      */
     @Override
-    public List<TransactionHistoryDtoRs> history(long userId) {
+    public List<TransactionHistoryRsDto> history(long userId) {
         var user = userRepository.getById(userId);
         if (!user.isPresent()) {
             return null;
@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService {
      * @return список действий пользователя.
      */
     @Override
-    public List<ActivityRs> activity(long userId) {
+    public List<ActivityRsDto> activity(long userId) {
         var user = userRepository.getById(userId);
         if (!user.isPresent()) {
             return null;

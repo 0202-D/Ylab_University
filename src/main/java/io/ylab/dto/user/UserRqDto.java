@@ -9,9 +9,18 @@ import javax.validation.constraints.NotBlank;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDtoRq {
+/**
+ * dto запроса на регистрацию и аутентификацию пользователя
+ */
+public class UserRqDto {
+    /**
+     * имя пользователя
+     */
     @NotBlank
     private String userName;
+    /**
+     * пароль пользователя
+     */
     @NotBlank
     private String password;
 }

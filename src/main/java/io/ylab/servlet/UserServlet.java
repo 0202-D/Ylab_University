@@ -10,11 +10,11 @@ import io.ylab.dao.transaction.JdbcTransactionRepository;
 import io.ylab.dao.transaction.TransactionRepository;
 import io.ylab.dao.user.JdbcUserRepository;
 import io.ylab.dao.user.UserRepository;
-import io.ylab.dto.activity.ActivityRs;
-import io.ylab.dto.transaction.CreditAndDebitRq;
-import io.ylab.dto.transaction.CreditAndDebitRs;
-import io.ylab.dto.transaction.TransactionHistoryDtoRs;
-import io.ylab.dto.transaction.UserBalanceRs;
+import io.ylab.dto.activity.ActivityRsDto;
+import io.ylab.dto.transaction.CreditAndDebitRqDto;
+import io.ylab.dto.transaction.CreditAndDebitRsDto;
+import io.ylab.dto.transaction.TransactionHistoryRsDto;
+import io.ylab.dto.transaction.UserBalanceRsDto;
 import io.ylab.exception.ExceptionJson;
 import io.ylab.security.JwtProvider;
 import io.ylab.service.UserService;
@@ -77,8 +77,8 @@ public class UserServlet extends HttpServlet {
             String requestURI = req.getRequestURI();
             if (requestURI.contains("user/balance")) {
                 long userId = getUserId(req);
-                UserBalanceRs userBalanceRs = userController.balance(userId);
-                if (userBalanceRs == null) {
+                UserBalanceRsDto userBalanceRsDto = userController.balance(userId);
+                if (userBalanceRsDto == null) {
                     ExceptionJson exceptionJson = ExceptionJson.builder()
                             .message(NOT_FOUND)
                             .httpResponse(HttpServletResponse.SC_NOT_FOUND)
@@ -89,11 +89,11 @@ public class UserServlet extends HttpServlet {
                 } else {
                     resp.setStatus(HttpServletResponse.SC_OK);
                     resp.setContentType(APPLICATION_JSON);
-                    resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(userBalanceRs));
+                    resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(userBalanceRsDto));
                 }
             } else if (requestURI.contains("/user/history/")) {
                 long userId = getUserId(req);
-                List<TransactionHistoryDtoRs> history = userController.history(userId);
+                List<TransactionHistoryRsDto> history = userController.history(userId);
                 if (history == null) {
                     ExceptionJson exceptionJson = ExceptionJson.builder()
                             .message(NOT_FOUND)
@@ -109,7 +109,7 @@ public class UserServlet extends HttpServlet {
                 }
             } else if (requestURI.contains("/user/activity")) {
                 long userId = getUserId(req);
-                List<ActivityRs> activity = userController.activity(userId);
+                List<ActivityRsDto> activity = userController.activity(userId);
                 if (activity == null) {
                     ExceptionJson exceptionJson = ExceptionJson.builder()
                             .message(NOT_FOUND)
@@ -137,11 +137,11 @@ public class UserServlet extends HttpServlet {
                 resp.setContentType(APPLICATION_JSON);
                 final var gson = new Gson();
                 var body = req.getReader();
-                final var creditRq = gson.fromJson(body, CreditAndDebitRq.class);
-                Set<ConstraintViolation<CreditAndDebitRq>> violations = validator.validate(creditRq);
+                final var creditRq = gson.fromJson(body, CreditAndDebitRqDto.class);
+                Set<ConstraintViolation<CreditAndDebitRqDto>> violations = validator.validate(creditRq);
                 if (!violations.isEmpty()) {
                     List<String> errors = new ArrayList<>();
-                    for (ConstraintViolation<CreditAndDebitRq> violation : violations) {
+                    for (ConstraintViolation<CreditAndDebitRqDto> violation : violations) {
                         resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         ExceptionJson exceptionJson = ExceptionJson.builder()
                                 .message(violation.getMessage())
@@ -153,16 +153,16 @@ public class UserServlet extends HttpServlet {
                 } else {
                     boolean isOk = userController.credit(creditRq);
                     if (!isOk) {
-                        CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
+                        CreditAndDebitRsDto creditAndDebitRsDto = CreditAndDebitRsDto.builder()
                                 .httpResponse(HttpServletResponse.SC_BAD_REQUEST).build();
                         resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         resp.setContentType(APPLICATION_JSON);
-                        resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+                        resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRsDto));
                     } else {
-                        CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
+                        CreditAndDebitRsDto creditAndDebitRsDto = CreditAndDebitRsDto.builder()
                                 .httpResponse(HttpServletResponse.SC_OK).build();
                         resp.setContentType(APPLICATION_JSON);
-                        resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+                        resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRsDto));
                     }
                 }
             }
@@ -170,11 +170,11 @@ public class UserServlet extends HttpServlet {
                 resp.setContentType(APPLICATION_JSON);
                 final var gson = new Gson();
                 var body = req.getReader();
-                final var debitRq = gson.fromJson(body, CreditAndDebitRq.class);
-                Set<ConstraintViolation<CreditAndDebitRq>> violations = validator.validate(debitRq);
+                final var debitRq = gson.fromJson(body, CreditAndDebitRqDto.class);
+                Set<ConstraintViolation<CreditAndDebitRqDto>> violations = validator.validate(debitRq);
                 if (!violations.isEmpty()) {
                     List<String> errors = new ArrayList<>();
-                    for (ConstraintViolation<CreditAndDebitRq> violation : violations) {
+                    for (ConstraintViolation<CreditAndDebitRqDto> violation : violations) {
                         resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         ExceptionJson exceptionJson = ExceptionJson.builder()
                                 .message(violation.getMessage())
@@ -186,16 +186,16 @@ public class UserServlet extends HttpServlet {
                 } else {
                     boolean isOk = userController.debit(debitRq);
                     if (!isOk) {
-                        CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
+                        CreditAndDebitRsDto creditAndDebitRsDto = CreditAndDebitRsDto.builder()
                                 .httpResponse(HttpServletResponse.SC_BAD_REQUEST).build();
                         resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         resp.setContentType(APPLICATION_JSON);
-                        resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+                        resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRsDto));
                     } else {
-                        CreditAndDebitRs creditAndDebitRs = CreditAndDebitRs.builder()
+                        CreditAndDebitRsDto creditAndDebitRsDto = CreditAndDebitRsDto.builder()
                                 .httpResponse(HttpServletResponse.SC_OK).build();
                         resp.setContentType(APPLICATION_JSON);
-                        resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRs));
+                        resp.getOutputStream().write(this.objectMapper.writeValueAsBytes(creditAndDebitRsDto));
                     }
                 }
             }

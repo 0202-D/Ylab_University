@@ -9,6 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreditAndDebitRs {
+/**
+ * Dto ответа по проведению транзакции
+ */
+public class CreditAndDebitRsDto {
+    /**
+     * код ответа
+     */
     private int httpResponse;
 }

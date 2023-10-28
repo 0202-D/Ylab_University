@@ -9,9 +9,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ActivityRs {
+/**
+ * Dto ответа по активности
+ */
+public class ActivityRsDto {
+    /**
+     * идентификатор действия
+     */
     private long actionId;
+    /**
+     * идентификатор пользователя
+     */
     private long userId;
+    /**
+     * enum вид активности
+     */
     private Activity activity;
 
 }

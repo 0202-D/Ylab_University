@@ -11,8 +11,20 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+/**
+ * dto ответа на регистрацию и аутентификацию пользователя
+ */
 public class UserDtoRs {
+    /**
+     * идентификатор пользователя
+     */
     private long userId;
+    /**
+     * имя пользователя
+     */
     private  String userName;
+    /**
+     * баланс пользователя
+     */
     private  BigDecimal balance;
 }

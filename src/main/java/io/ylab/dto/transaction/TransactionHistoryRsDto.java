@@ -11,12 +11,24 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TransactionHistoryDtoRs {
+/**
+ * Dto ответа по истории транзакции
+ */
+public class TransactionHistoryRsDto {
+    /**
+     * идентификатор транзакции
+     */
     private Long transactionId;
-
+    /**
+     * тип транзакции
+     */
     private TransactionalType transactionalType;
-
+    /**
+     * сумма транзакции
+     */
     private BigDecimal sum;
-
+    /**
+     * идентификатор пользователя
+     */
     private long userId;
 }

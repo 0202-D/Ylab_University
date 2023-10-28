@@ -11,8 +11,17 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserBalanceRs {
+/**
+ * dto ответа на запрос по балансу
+ */
+public class UserBalanceRsDto {
+   /**
+    * имя пользователя
+    */
    private String userName;
+   /**
+    * баланс
+    */
    private BigDecimal balance;
 
 }

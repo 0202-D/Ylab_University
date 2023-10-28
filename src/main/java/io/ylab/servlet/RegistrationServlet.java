@@ -8,7 +8,7 @@ import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.action.JdbcActionRepository;
 import io.ylab.dao.user.JdbcUserRepository;
 import io.ylab.dao.user.UserRepository;
-import io.ylab.dto.user.UserDtoRq;
+import io.ylab.dto.user.UserRqDto;
 import io.ylab.exception.ExceptionJson;
 import io.ylab.mapper.user.UserMapper;
 import io.ylab.service.AuthService;
@@ -67,11 +67,11 @@ public class RegistrationServlet extends HttpServlet {
         resp.setContentType(APPLICATION_JSON);
         final var gson = new Gson();
         var body = req.getReader();
-        final var userDto = gson.fromJson(body, UserDtoRq.class);
-        Set<ConstraintViolation<UserDtoRq>> violations = validator.validate(userDto);
+        final var userDto = gson.fromJson(body, UserRqDto.class);
+        Set<ConstraintViolation<UserRqDto>> violations = validator.validate(userDto);
         if (!violations.isEmpty()) {
             List<String> errors = new ArrayList<>();
-            for (ConstraintViolation<UserDtoRq> violation : violations) {
+            for (ConstraintViolation<UserRqDto> violation : violations) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 ExceptionJson exceptionJson = ExceptionJson.builder()
                         .message(violation.getMessage())

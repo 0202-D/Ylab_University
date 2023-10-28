@@ -12,9 +12,18 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreditAndDebitRq {
+/**
+ * Dto запроса по проведению транзакции
+ */
+public class CreditAndDebitRqDto {
+    /**
+     * сумма пополнения
+     */
     @NotNull
     private BigDecimal sum;
+    /**
+     * идентификатор пользователя
+     */
     @NotNull
     private long userId;
 }
