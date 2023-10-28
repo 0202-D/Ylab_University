@@ -1,35 +1,37 @@
 package io.ylab.controller;
 
+import io.ylab.dto.activity.ActivityRsDto;
+import io.ylab.dto.transaction.CreditAndDebitRqDto;
+import io.ylab.dto.transaction.TransactionHistoryRsDto;
+import io.ylab.dto.transaction.UserBalanceRsDto;
 import io.ylab.service.UserService;
-import io.ylab.model.Action;
-import io.ylab.model.Transaction;
-import io.ylab.model.User;
 import lombok.RequiredArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RequiredArgsConstructor
 public class UserController {
+    public static final String APPLICATION_JSON = "application/json";
     private final UserService userService;
 
-    public void balance(User user) {
-        userService.balance(user);
+
+    public UserBalanceRsDto balance(long userid) {
+        return userService.balance(userid);
     }
 
-    public boolean debit(BigDecimal sum, User user, Transaction transaction) {
-        return userService.debit(sum, user, transaction);
+    public boolean debit(CreditAndDebitRqDto debitRq) {
+        return userService.debit(debitRq.getSum(), debitRq.getUserId());
     }
 
-    public boolean credit(BigDecimal sum, User user, Transaction transaction) {
-        return userService.credit(sum, user, transaction);
+    public boolean credit(CreditAndDebitRqDto creditAndDebitRqDto) {
+        return userService.credit(creditAndDebitRqDto.getSum(), creditAndDebitRqDto.getUserId());
     }
 
-    public List<Transaction> history(User user) {
-        return userService.history(user);
+    public List<TransactionHistoryRsDto> history(long userId) {
+        return userService.history(userId);
     }
 
-    public List<Action> activity(User currentUser) {
-        return userService.activity(currentUser);
+    public List<ActivityRsDto> activity(Long userId) {
+        return userService.activity(userId);
     }
 }

@@ -4,7 +4,7 @@ import io.ylab.model.User;
 
 public interface AuthService {
 
-    boolean addUser();
+    User addUser(User user);
 
-    User authenticateUser();
+    User authenticateUser(User user);
 }

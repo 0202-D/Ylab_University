@@ -38,7 +38,7 @@
     <changeSet id="create-table-transaction" author="petrov">
         <!-- Создание таблицы transaction -->
         <createTable tableName="transaction" schemaName="domain">
-            <column name="transaction_id" type="BIGINT" autoIncrement="true">
+            <column name="transaction_id" type="BIGINT" autoIncrement="true" >
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="transactional_type" type="VARCHAR(50)"/>
