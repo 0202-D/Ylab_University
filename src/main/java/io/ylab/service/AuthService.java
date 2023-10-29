@@ -1,10 +1,11 @@
 package io.ylab.service;
 
+import io.ylab.dto.user.UserRqDto;
 import io.ylab.model.User;
 
 public interface AuthService {
 
-    User addUser(User user);
+    User addUser(UserRqDto user);
 
-    User authenticateUser(User user);
+    User authenticateUser(UserRqDto user);
 }

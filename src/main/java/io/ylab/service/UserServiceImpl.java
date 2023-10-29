@@ -13,8 +13,8 @@ import io.ylab.model.Activity;
 import io.ylab.model.Transaction;
 import io.ylab.model.TransactionalType;
 import io.ylab.utils.TransactionGenerator;
-import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * Реализация интерфейса UserService, предоставляющая функциональность работы с балансом пользователей и их транзакциями.
  */
-@RequiredArgsConstructor
+@Service
 public class UserServiceImpl implements UserService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
@@ -31,6 +31,12 @@ public class UserServiceImpl implements UserService {
     private final TransactionMapper transactionMapper = Mappers.getMapper(TransactionMapper.class);
 
     private final ActionMapper actionMapper = Mappers.getMapper(ActionMapper.class);
+
+    public UserServiceImpl(TransactionRepository transactionRepository, UserRepository userRepository, ActionRepository actionRepository) {
+        this.transactionRepository = transactionRepository;
+        this.userRepository = userRepository;
+        this.actionRepository = actionRepository;
+    }
 
     /**
      * Метод для получения баланса пользователя.

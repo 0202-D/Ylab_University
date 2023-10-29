@@ -7,6 +7,7 @@ import io.ylab.model.Action;
 import io.ylab.model.Activity;
 import io.ylab.model.User;
 import io.ylab.utils.HikariCPDataSource;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+@Repository
 public class JdbcActionRepository implements ActionRepository {
     private static final String INSERT_QUERY = "INSERT INTO domain.action (user_id,activity) VALUES(?, ?)";
     private static final String GET_QUERY = "SELECT a.action_id, a.activity" +

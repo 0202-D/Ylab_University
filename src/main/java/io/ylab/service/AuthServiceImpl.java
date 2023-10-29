@@ -3,10 +3,11 @@ package io.ylab.service;
 import io.ylab.aop.annotation.Loggable;
 import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.user.UserRepository;
+import io.ylab.dto.user.UserRqDto;
 import io.ylab.model.Action;
 import io.ylab.model.Activity;
 import io.ylab.model.User;
-import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -14,18 +15,22 @@ import java.util.Optional;
 /**
  * Реализация интерфейса AuthService, предоставляющая функциональность авторизации и регистрации пользователей.
  */
-@RequiredArgsConstructor
+@Service
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
-
     private final ActionRepository actionRepository;
+
+    public AuthServiceImpl(UserRepository userRepository, ActionRepository actionRepository) {
+        this.userRepository = userRepository;
+        this.actionRepository = actionRepository;
+    }
 
     /**
      * Метод для добавления нового пользователя.
      *
      * @return true, если пользователь успешно зарегистрирован, false - если пользователь с таким именем уже существует.
      */
-    public User addUser(User user) {
+    public User addUser(UserRqDto user) {
         Optional<User> optionalUser = userRepository.getByName(user.getUserName());
         if (optionalUser.isPresent()) {
             return null;
@@ -51,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
      */
 
     @Loggable
-    public User authenticateUser(User user) {
+    public User authenticateUser(UserRqDto user) {
         Optional<User> optionalUser = userRepository.getByName(user.getUserName());
         if (optionalUser.isEmpty()) {
             return null;

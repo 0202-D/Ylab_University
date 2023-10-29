@@ -1,5 +1,6 @@
 package io.ylab.model;
 
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,14 +13,20 @@ import lombok.experimental.FieldDefaults;
 /**
  * Класс, описывающий действие пользователя в системе.
  */
+@Entity
+@Table(name = "action")
 public class Action {
     /**
      * идентификатор действия
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     long actionId;
     /**
      * Объект пользователя, выполнившего действие.
      */
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
     User user;
     /**
      * Тип действия пользователя.

@@ -5,14 +5,18 @@ import io.ylab.dto.transaction.CreditAndDebitRqDto;
 import io.ylab.dto.transaction.TransactionHistoryRsDto;
 import io.ylab.dto.transaction.UserBalanceRsDto;
 import io.ylab.service.UserService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+@RestController
 public class UserController {
     public static final String APPLICATION_JSON = "application/json";
     private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
 
     public UserBalanceRsDto balance(long userid) {

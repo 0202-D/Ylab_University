@@ -1,5 +1,6 @@
 package io.ylab.model;
 
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,10 +14,14 @@ import java.math.BigDecimal;
 /**
  * Класс, представляющий пользователя системы.
  */
+@Entity
+@Table(name = "user")
 public class User {
     /**
      * Идентификатор пользователя
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     long userId;
     /**
      * Имя пользователя

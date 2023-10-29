@@ -7,6 +7,7 @@ import io.ylab.model.Transaction;
 import io.ylab.model.TransactionalType;
 import io.ylab.model.User;
 import io.ylab.utils.HikariCPDataSource;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,7 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@Repository
 public class JdbcTransactionRepository implements TransactionRepository {
     private static final String INSERT_QUERY = "INSERT INTO domain.transaction (transactional_type,sum,user_id) VALUES(?, ?,?)";
     private static final String GET_QUERY = "SELECT t.transaction_id,t.transactional_type, t.sum, t.user_id " +
