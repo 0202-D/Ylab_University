@@ -13,7 +13,6 @@ import javax.validation.Valid;
 
 @RestController
 public class AuthController {
-    public static final String APPLICATION_JSON = "application/json";
     private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
     private final AuthService authService;
 

@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 @Data
@@ -19,11 +19,11 @@ public class CreditAndDebitRqDto {
     /**
      * сумма пополнения
      */
-    @NotNull
+    @NotBlank
     private BigDecimal sum;
     /**
      * идентификатор пользователя
      */
-    @NotNull
+    @NotBlank
     private long userId;
 }

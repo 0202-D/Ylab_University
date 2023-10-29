@@ -1,6 +1,7 @@
 package io.ylab;
 
 import io.ylab.dto.user.UserDtoRs;
+import io.ylab.dto.user.UserRqDto;
 import io.ylab.model.*;
 
 import java.math.BigDecimal;
@@ -12,6 +13,12 @@ public class Utils {
                 .userName("username")
                 .password("password")
                 .balance(new BigDecimal(100))
+                .build();
+    }
+    public static UserRqDto getUserRqDto() {
+        return UserRqDto.builder()
+                .userName("username")
+                .password("password")
                 .build();
     }
 
