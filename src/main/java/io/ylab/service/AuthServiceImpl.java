@@ -1,6 +1,5 @@
 package io.ylab.service;
 
-import io.ylab.aop.annotation.Loggable;
 import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.user.UserRepository;
 import io.ylab.dto.user.UserRqDto;
@@ -55,7 +54,6 @@ public class AuthServiceImpl implements AuthService {
      * @return объект User, если пользователь успешно аутентифицирован, null - если пользователь не найден или введен неверный пароль.
      */
 
-    @Loggable
     public User authenticateUser(UserRqDto user) {
         Optional<User> optionalUser = userRepository.getByName(user.getUserName());
         if (optionalUser.isEmpty()) {
