@@ -1,6 +1,5 @@
 package io.ylab.dao.action;
 
-import io.ylab.dao.user.JdbcUserRepository;
 import io.ylab.dao.user.UserRepository;
 import io.ylab.exception.NotFoundException;
 import io.ylab.model.Action;
@@ -22,7 +21,11 @@ public class JdbcActionRepository implements ActionRepository {
             " FROM domain.action a" +
             " INNER JOIN domain.user u ON a.user_id = u.user_id" +
             " WHERE u.user_name = ?";
-    private final UserRepository userRepository = new JdbcUserRepository();
+    private final UserRepository userRepository;
+
+    public JdbcActionRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
 
     @Override

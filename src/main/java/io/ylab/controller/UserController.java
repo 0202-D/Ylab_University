@@ -5,6 +5,9 @@ import io.ylab.dto.transaction.CreditAndDebitRqDto;
 import io.ylab.dto.transaction.TransactionHistoryRsDto;
 import io.ylab.dto.transaction.UserBalanceRsDto;
 import io.ylab.service.UserService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -18,24 +21,28 @@ public class UserController {
         this.userService = userService;
     }
 
-
-    public UserBalanceRsDto balance(long userid) {
+    @GetMapping("/balance/{userId}")
+    public UserBalanceRsDto balance(@PathVariable("userId") long userid) {
         return userService.balance(userid);
     }
 
+    @PostMapping("/debit")
     public boolean debit(CreditAndDebitRqDto debitRq) {
         return userService.debit(debitRq.getSum(), debitRq.getUserId());
     }
 
+    @PostMapping("/credit}")
     public boolean credit(CreditAndDebitRqDto creditAndDebitRqDto) {
         return userService.credit(creditAndDebitRqDto.getSum(), creditAndDebitRqDto.getUserId());
     }
 
-    public List<TransactionHistoryRsDto> history(long userId) {
+    @GetMapping("/history/{userId}")
+    public List<TransactionHistoryRsDto> history(@PathVariable("userId") long userId) {
         return userService.history(userId);
     }
 
-    public List<ActivityRsDto> activity(Long userId) {
+    @GetMapping("/activity/{userId}")
+    public List<ActivityRsDto> activity(@PathVariable("userId") Long userId) {
         return userService.activity(userId);
     }
 }
