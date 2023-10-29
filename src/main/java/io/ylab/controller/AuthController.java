@@ -24,18 +24,12 @@ public class AuthController {
     @PostMapping("/reg")
     public UserDtoRs addUser(@RequestBody @Valid UserRqDto user) {
         var newUser = authService.addUser(user);
-        if (newUser == null) {
-            return null;
-        }
         return mapper.toDtoRs(newUser);
     }
 
     @PostMapping("/auth")
     public UserDtoRs authenticateUser(@RequestBody @Valid UserRqDto user) {
         var newUser = authService.authenticateUser(user);
-        if (newUser == null) {
-            return null;
-        }
         return mapper.toDtoRs(newUser);
     }
 }

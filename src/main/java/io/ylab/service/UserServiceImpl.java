@@ -6,6 +6,8 @@ import io.ylab.dao.user.UserRepository;
 import io.ylab.dto.activity.ActivityRsDto;
 import io.ylab.dto.transaction.TransactionHistoryRsDto;
 import io.ylab.dto.transaction.UserBalanceRsDto;
+import io.ylab.exception.IncorrectDataException;
+import io.ylab.exception.NotFoundException;
 import io.ylab.mapper.action.ActionMapper;
 import io.ylab.mapper.transaction.TransactionMapper;
 import io.ylab.model.Action;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class UserServiceImpl implements UserService {
+    private static final String USER_NOT_FOUND = "Такого ползователя не существует";
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final ActionRepository actionRepository;
@@ -45,18 +48,15 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserBalanceRsDto balance(long userId) {
-        var user = userRepository.getById(userId);
-        if (!user.isPresent()) {
-            return null;
-        } else {
-            var findUser = user.get();
-            actionRepository.addAction(new Action(1L, findUser, Activity.BALANCE));
-            return UserBalanceRsDto.builder()
-                    .userName(findUser.getUserName())
-                    .balance(findUser.getBalance())
-                    .build();
-        }
+        var user = userRepository.getById(userId)
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+        actionRepository.addAction(new Action(1L, user, Activity.BALANCE));
+        return UserBalanceRsDto.builder()
+                .userName(user.getUserName())
+                .balance(user.getBalance())
+                .build();
     }
+
 
     /**
      * Метод для списания средств с баланса пользователя.
@@ -67,21 +67,21 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public boolean debit(BigDecimal sum, long userId) {
-        var user = userRepository.getById(userId);
-        if (user.isEmpty() || validate(sum)) {
-            return false;
+        var user = userRepository.getById(userId)
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+        if (validate(sum)) {
+            throw new IncorrectDataException("Сумма должна быть положительная");
         }
-        var findUser = user.get();
-        if (findUser.getBalance().compareTo(sum) < 0) {
-            return false;
+        if (user.getBalance().compareTo(sum) < 0) {
+            throw new IncorrectDataException("Не достаточно средств");
         } else {
-            findUser.setBalance(findUser.getBalance().subtract(sum));
-            userRepository.updateBalance(findUser.getUserId(), findUser.getBalance());
+            user.setBalance(user.getBalance().subtract(sum));
+            userRepository.updateBalance(user.getUserId(), user.getBalance());
             Transaction transaction = TransactionGenerator
-                    .generateTransaction(TransactionalType.DEBIT, sum, findUser);
+                    .generateTransaction(TransactionalType.DEBIT, sum, user);
             transactionRepository.addTransaction(transaction);
             actionRepository.addAction(Action.builder()
-                    .user(findUser)
+                    .user(user)
                     .activity(Activity.CREDIT)
                     .build());
             return true;
@@ -96,10 +96,7 @@ public class UserServiceImpl implements UserService {
      * @throws RuntimeException если транзакция с таким id уже проводилась.
      */
     private boolean validate(BigDecimal sum) {
-        if (sum.compareTo(BigDecimal.ZERO) < 0) {
-            return true;
-        }
-        return false;
+        return sum.compareTo(BigDecimal.ZERO) < 0;
     }
 
     /**
@@ -111,18 +108,18 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public boolean credit(BigDecimal sum, long userId) {
-        var user = userRepository.getById(userId);
-        if (user.isEmpty() || validate(sum)) {
-            return false;
+        var user = userRepository.getById(userId)
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+        if (validate(sum)) {
+            throw new IncorrectDataException("Сумма должна быть положительная");
         } else {
-            var findUser = user.get();
-            findUser.setBalance(findUser.getBalance().add(sum));
-            userRepository.updateBalance(findUser.getUserId(), findUser.getBalance());
+            user.setBalance(user.getBalance().add(sum));
+            userRepository.updateBalance(user.getUserId(), user.getBalance());
             Transaction transaction = TransactionGenerator
-                    .generateTransaction(TransactionalType.CREDIT, sum, findUser);
+                    .generateTransaction(TransactionalType.CREDIT, sum, user);
             transactionRepository.addTransaction(transaction);
             actionRepository.addAction(Action.builder()
-                    .user(findUser)
+                    .user(user)
                     .activity(Activity.CREDIT)
                     .build());
             return true;
@@ -137,13 +134,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<TransactionHistoryRsDto> history(long userId) {
-        var user = userRepository.getById(userId);
-        if (!user.isPresent()) {
-            return null;
-        }
-        var findUser = user.get();
-        List<Transaction> transactions = transactionRepository.getAllByUserName(findUser.getUserName());
-        actionRepository.addAction(new Action(1L, findUser, Activity.HISTORY));
+        var user = userRepository.getById(userId)
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+        List<Transaction> transactions = transactionRepository.getAllByUserName(user.getUserName());
+        actionRepository.addAction(new Action(1L, user, Activity.HISTORY));
         return transactions.stream().map(transactionMapper::toDtoRs).collect(Collectors.toList());
     }
 
@@ -155,13 +149,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<ActivityRsDto> activity(long userId) {
-        var user = userRepository.getById(userId);
-        if (!user.isPresent()) {
-            return null;
-        }
-        var findUser = user.get();
-        List<Action> actions = actionRepository.getAllByUserName(findUser.getUserName());
-        return actions.stream().map(a -> actionMapper.toDtoRs(a)).collect(Collectors.toList());
+        var user = userRepository.getById(userId)
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+        List<Action> actions = actionRepository.getAllByUserName(user.getUserName());
+        return actions.stream().map(actionMapper::toDtoRs).collect(Collectors.toList());
     }
 
 }
