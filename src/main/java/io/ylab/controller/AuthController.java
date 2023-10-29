@@ -21,7 +21,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/auth")
+    @PostMapping("/reg")
     public UserDtoRs addUser(@RequestBody @Valid UserRqDto user) {
         var newUser = authService.addUser(user);
         if (newUser == null) {
@@ -30,7 +30,7 @@ public class AuthController {
         return mapper.toDtoRs(newUser);
     }
 
-    @PostMapping("/reg")
+    @PostMapping("/auth")
     public UserDtoRs authenticateUser(@RequestBody @Valid UserRqDto user) {
         var newUser = authService.authenticateUser(user);
         if (newUser == null) {
