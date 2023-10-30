@@ -12,12 +12,3 @@ logging:
   level:
     io.ylab: DEBUG
 
-springdoc:
-  swagger-ui:
-    tagsSorter: alpha
-    operations-sorter: method
-
-swagger:
-  info:
-    title: "API Wallet"
-    description: "Backend for api wallet�"

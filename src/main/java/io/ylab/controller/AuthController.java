@@ -1,6 +1,5 @@
 package io.ylab.controller;
 
-import io.swagger.annotations.Api;
 import io.ylab.dto.user.UserDtoRs;
 import io.ylab.dto.user.UserRqDto;
 import io.ylab.mapper.user.UserMapper;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-@Api(value = "Регистрация и аутентификация пользователя")
 @RestController
 public class AuthController {
     private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
