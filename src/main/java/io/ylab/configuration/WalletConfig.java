@@ -3,10 +3,7 @@ package io.ylab.configuration;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -22,6 +19,7 @@ import java.util.Properties;
 @EnableWebMvc
 @EnableTransactionManagement
 @PropertySource("classpath:application.yml")
+@EnableAspectJAutoProxy
 public class WalletConfig {
     @Bean
     DataSource dataSource(){
