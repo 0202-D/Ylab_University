@@ -10,5 +10,5 @@ spring:
     url: jdbc:postgresql://localhost:5432/wallet
 logging:
   level:
-    io.ylab: DEBUG
+    io.ylab: INFO
 

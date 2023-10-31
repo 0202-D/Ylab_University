@@ -50,7 +50,6 @@ public class UserServiceImpl implements UserService {
     public UserBalanceRsDto balance(long userId) {
         var user = userRepository.getById(userId)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
-        actionRepository.addAction(new Action(1L, user, Activity.BALANCE));
         return UserBalanceRsDto.builder()
                 .userName(user.getUserName())
                 .balance(user.getBalance())

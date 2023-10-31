@@ -13,17 +13,18 @@ import org.springframework.stereotype.Component;
 @Aspect
 public class LoggableAspect {
     private static final Logger logger = LogManager.getLogger(LoggableAspect.class);
-    @Pointcut("within(@io.ylab.aop.annotation.Loggable *) && execution(* *(..))")
+
+    @Pointcut("@annotation(io.ylab.aop.annotation.Loggable) && execution(* *(..))")
     public void annotatedByLoggable() {
     }
 
     @Around("annotatedByLoggable()")
     public Object logging(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        logger.log(Level.INFO,"Calling method " + proceedingJoinPoint.getSignature());
+        logger.log(Level.INFO, "Calling method " + proceedingJoinPoint.getSignature());
         long startTime = System.currentTimeMillis();
         Object result = proceedingJoinPoint.proceed();
         long endTime = System.currentTimeMillis();
-        logger.log(Level.INFO,"Execution of method " + proceedingJoinPoint.getSignature() +
+        logger.log(Level.INFO, "Execution of method " + proceedingJoinPoint.getSignature() +
                 " finished. Execution time is " + (endTime - startTime) + " ms");
         return result;
     }
