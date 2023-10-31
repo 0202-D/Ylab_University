@@ -1,5 +1,8 @@
 package io.ylab;
 
+import io.ylab.dto.transaction.CreditAndDebitRqDto;
+import io.ylab.dto.transaction.TransactionHistoryRsDto;
+import io.ylab.dto.transaction.UserBalanceRsDto;
 import io.ylab.dto.user.UserDtoRs;
 import io.ylab.dto.user.UserRqDto;
 import io.ylab.model.*;
@@ -15,6 +18,7 @@ public class Utils {
                 .balance(new BigDecimal(100))
                 .build();
     }
+
     public static UserRqDto getUserRqDto() {
         return UserRqDto.builder()
                 .userName("username")
@@ -30,12 +34,34 @@ public class Utils {
                 build();
     }
 
+    public static UserBalanceRsDto getUserBalanceRsDto() {
+        return UserBalanceRsDto.builder()
+                .userName("username")
+                .balance(new BigDecimal(100))
+                .build();
+    }
+
+    public static CreditAndDebitRqDto getCreditAndDebitRqDto() {
+        return CreditAndDebitRqDto.builder()
+                .userId(1L)
+                .sum(new BigDecimal(100))
+                .build();
+    }
+
     public static Transaction getDebitTransaction() {
         return Transaction.builder()
                 .transactionId(1L)
                 .transactionalType(TransactionalType.DEBIT)
                 .sum(new BigDecimal("100"))
                 .user(getUser())
+                .build();
+    }
+    public static TransactionHistoryRsDto getTransactionHistoryRsDto(){
+        return TransactionHistoryRsDto.builder()
+                .transactionId(1L)
+                .transactionalType(TransactionalType.CREDIT)
+                .sum(new BigDecimal(100))
+                        .userId(1)
                 .build();
     }
 

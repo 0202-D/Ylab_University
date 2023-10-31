@@ -53,8 +53,7 @@ class UserServiceImplTest {
         User user = Utils.getUser();
         long userId = user.getUserId();
         when(userRepository.getById(userId)).thenReturn(Optional.of(user));
-        boolean result = userService.debit(sum, userId);
-        assertTrue(result);
+        userService.debit(sum, userId);
         assertEquals(BigDecimal.valueOf(50), user.getBalance());
         verify(transactionRepository, times(1)).addTransaction(any(Transaction.class));
         verify(actionRepository, times(1)).addAction(any(Action.class));
@@ -67,20 +66,20 @@ class UserServiceImplTest {
         long userId = user.getUserId();
         BigDecimal sum = BigDecimal.valueOf(50);
         when(userRepository.getById(userId)).thenReturn(Optional.of(user));
-        boolean result = userService.credit(sum, userId);
-        assertTrue(result);
+        userService.credit(sum, userId);
         assertEquals(BigDecimal.valueOf(150), user.getBalance());
         verify(transactionRepository, times(1)).addTransaction(any(Transaction.class));
         verify(actionRepository, times(1)).addAction(any(Action.class));
     }
+
     @Test
     @DisplayName("Тест метода получения истории")
-     void testHistoryValidUserId() {
+    void testHistoryValidUserId() {
         User user = Utils.getUser();
         long userId = user.getUserId();
         List<Transaction> transactions = Arrays.asList(
-               Utils.getCreditTransaction(),
-              Utils.getDebitTransaction()
+                Utils.getCreditTransaction(),
+                Utils.getDebitTransaction()
         );
         when(userRepository.getById(userId)).thenReturn(Optional.of(user));
         when(transactionRepository.getAllByUserName("username")).thenReturn(transactions);
@@ -92,6 +91,7 @@ class UserServiceImplTest {
         assertEquals(TransactionalType.DEBIT, result.get(1).getTransactionalType());
         assertEquals(userId, result.get(1).getUserId());
     }
+
     @Test
     @DisplayName("Тест получения активностей")
     void testActivityValidUserId() {

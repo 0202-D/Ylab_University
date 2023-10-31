@@ -10,9 +10,9 @@ import java.util.List;
 public interface UserService {
     UserBalanceRsDto balance(long userId);
 
-    boolean debit(BigDecimal sum, long userId);
+    void debit(BigDecimal sum, long userId);
 
-    boolean credit(BigDecimal sum, long userId);
+    void credit(BigDecimal sum, long userId);
 
     List<TransactionHistoryRsDto> history(long userId);
 

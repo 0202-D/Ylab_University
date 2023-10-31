@@ -5,10 +5,9 @@ import io.ylab.dto.transaction.CreditAndDebitRqDto;
 import io.ylab.dto.transaction.TransactionHistoryRsDto;
 import io.ylab.dto.transaction.UserBalanceRsDto;
 import io.ylab.service.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,13 +26,15 @@ public class UserController {
     }
 
     @PostMapping("/debit")
-    public boolean debit(CreditAndDebitRqDto debitRq) {
-        return userService.debit(debitRq.getSum(), debitRq.getUserId());
+    public ResponseEntity debit(@RequestBody CreditAndDebitRqDto debitRq) {
+        userService.debit(debitRq.getSum(), debitRq.getUserId());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/credit}")
-    public boolean credit(CreditAndDebitRqDto creditAndDebitRqDto) {
-        return userService.credit(creditAndDebitRqDto.getSum(), creditAndDebitRqDto.getUserId());
+    public ResponseEntity credit(@RequestBody CreditAndDebitRqDto creditAndDebitRqDto) {
+        userService.credit(creditAndDebitRqDto.getSum(), creditAndDebitRqDto.getUserId());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/history/{userId}")

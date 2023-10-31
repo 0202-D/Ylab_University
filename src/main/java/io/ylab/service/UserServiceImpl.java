@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
      * @return true, если операция успешно проведена, false - если на балансе недостаточно средств для списания.
      */
     @Override
-    public boolean debit(BigDecimal sum, long userId) {
+    public void debit(BigDecimal sum, long userId) {
         var user = userRepository.getById(userId)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
         if (validate(sum)) {
@@ -84,7 +84,6 @@ public class UserServiceImpl implements UserService {
                     .user(user)
                     .activity(Activity.CREDIT)
                     .build());
-            return true;
         }
     }
 
@@ -107,7 +106,7 @@ public class UserServiceImpl implements UserService {
      * @return true, если операция успешно проведена.
      */
     @Override
-    public boolean credit(BigDecimal sum, long userId) {
+    public void credit(BigDecimal sum, long userId) {
         var user = userRepository.getById(userId)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
         if (validate(sum)) {
@@ -122,7 +121,6 @@ public class UserServiceImpl implements UserService {
                     .user(user)
                     .activity(Activity.CREDIT)
                     .build());
-            return true;
         }
     }
 
