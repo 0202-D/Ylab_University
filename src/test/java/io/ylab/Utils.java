@@ -1,5 +1,6 @@
 package io.ylab;
 
+import io.ylab.dto.activity.ActivityRsDto;
 import io.ylab.dto.transaction.CreditAndDebitRqDto;
 import io.ylab.dto.transaction.TransactionHistoryRsDto;
 import io.ylab.dto.transaction.UserBalanceRsDto;
@@ -56,12 +57,27 @@ public class Utils {
                 .user(getUser())
                 .build();
     }
-    public static TransactionHistoryRsDto getTransactionHistoryRsDto(){
+
+    public static TransactionHistoryRsDto getTransactionHistoryRsDto() {
         return TransactionHistoryRsDto.builder()
                 .transactionId(1L)
                 .transactionalType(TransactionalType.CREDIT)
                 .sum(new BigDecimal(100))
-                        .userId(1)
+                .userId(1)
+                .build();
+    }
+    public static ActivityRsDto getActivityRsDto(){
+        return ActivityRsDto.builder()
+                .userId(1L)
+                .activity(Activity.HISTORY)
+                .actionId(1L)
+                .build();
+    }
+    public static ActivityRsDto getSecondActivityRsDto(){
+        return ActivityRsDto.builder()
+                .userId(1L)
+                .activity(Activity.BALANCE)
+                .actionId(2L)
                 .build();
     }
 

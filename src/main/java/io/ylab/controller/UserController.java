@@ -30,7 +30,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/credit}")
+    @PostMapping("/credit")
     public ResponseEntity credit(@RequestBody CreditAndDebitRqDto creditAndDebitRqDto) {
         userService.credit(creditAndDebitRqDto.getSum(), creditAndDebitRqDto.getUserId());
         return new ResponseEntity<>(HttpStatus.OK);
