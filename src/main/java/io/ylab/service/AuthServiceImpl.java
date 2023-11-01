@@ -31,7 +31,7 @@ public class AuthServiceImpl implements AuthService {
     /**
      * Метод для добавления нового пользователя.
      *
-     * @return true, если пользователь успешно зарегистрирован, false - если пользователь с таким именем уже существует.
+     * @return объект User, если пользователь успешно аутентифицирован
      */
 
     public User addUser(UserRqDto user) {
@@ -56,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
     /**
      * Метод для аутентификации пользователя.
      *
-     * @return объект User, если пользователь успешно аутентифицирован, null - если пользователь не найден или введен неверный пароль.
+     * @return объект User, если пользователь успешно аутентифицирован
      */
     @Loggable
     public User authenticateUser(UserRqDto user) {
