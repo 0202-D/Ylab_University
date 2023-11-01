@@ -11,7 +11,6 @@ import io.ylab.exception.NotFoundException;
 import io.ylab.mapper.action.ActionMapper;
 import io.ylab.mapper.transaction.TransactionMapper;
 import io.ylab.model.Action;
-import io.ylab.model.Activity;
 import io.ylab.model.Transaction;
 import io.ylab.model.TransactionalType;
 import io.ylab.utils.TransactionGenerator;
@@ -56,13 +55,11 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-
     /**
      * Метод для списания средств с баланса пользователя.
      *
      * @param sum    - сумма списания.
-     * @param userId - объект пользователя, у которого нужно списать средства.
-     * @return true, если операция успешно проведена, false - если на балансе недостаточно средств для списания.
+     * @param userId - идентификатор пользователя, у которого нужно списать средства.
      */
     @Override
     public void debit(BigDecimal sum, long userId) {
@@ -79,10 +76,6 @@ public class UserServiceImpl implements UserService {
             Transaction transaction = TransactionGenerator
                     .generateTransaction(TransactionalType.DEBIT, sum, user);
             transactionRepository.addTransaction(transaction);
-            actionRepository.addAction(Action.builder()
-                    .user(user)
-                    .activity(Activity.CREDIT)
-                    .build());
         }
     }
 
@@ -91,7 +84,6 @@ public class UserServiceImpl implements UserService {
      *
      * @param sum - сумма, которую нужно проверить.
      * @return true, если введены некорректные данные.
-     * @throws RuntimeException если транзакция с таким id уже проводилась.
      */
     private boolean validate(BigDecimal sum) {
         return sum.compareTo(BigDecimal.ZERO) < 0;
@@ -102,7 +94,6 @@ public class UserServiceImpl implements UserService {
      *
      * @param sum    - сумма зачисления.
      * @param userId - id пользователя, на баланс которого нужно зачислить средства.
-     * @return true, если операция успешно проведена.
      */
     @Override
     public void credit(BigDecimal sum, long userId) {
@@ -116,10 +107,6 @@ public class UserServiceImpl implements UserService {
             Transaction transaction = TransactionGenerator
                     .generateTransaction(TransactionalType.CREDIT, sum, user);
             transactionRepository.addTransaction(transaction);
-            actionRepository.addAction(Action.builder()
-                    .user(user)
-                    .activity(Activity.CREDIT)
-                    .build());
         }
     }
 
@@ -134,7 +121,6 @@ public class UserServiceImpl implements UserService {
         var user = userRepository.getById(userId)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
         List<Transaction> transactions = transactionRepository.getAllByUserName(user.getUserName());
-        actionRepository.addAction(new Action(1L, user, Activity.HISTORY));
         return transactions.stream().map(transactionMapper::toDtoRs).collect(Collectors.toList());
     }
 

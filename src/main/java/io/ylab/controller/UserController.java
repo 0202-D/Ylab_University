@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 public class UserController {
-    public static final String APPLICATION_JSON = "application/json";
     private final UserService userService;
 
     public UserController(UserService userService) {
