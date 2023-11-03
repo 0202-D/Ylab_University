@@ -39,7 +39,7 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("Тест метода аутентификации юзерв")
+    @DisplayName("Должен успешно аутентифицировать существующего пользователя")
     void testAuthenticateUser() throws Exception {
         UserRqDto userRqDto = Utils.getUserRqDto();
         User authenticatedUser = Utils.getUser();
@@ -52,7 +52,7 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("Тест метода регистрации юзерв")
+    @DisplayName(" Должен успешно зарегестрировать пользователя")
     void testAddUser() throws Exception {
         UserRqDto userRqDto = Utils.getUserRqDto();
         User user = Utils.getUser();

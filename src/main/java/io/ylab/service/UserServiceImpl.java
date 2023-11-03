@@ -14,7 +14,6 @@ import io.ylab.model.Action;
 import io.ylab.model.Transaction;
 import io.ylab.model.TransactionalType;
 import io.ylab.utils.TransactionGenerator;
-import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -30,14 +29,15 @@ public class UserServiceImpl implements UserService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final ActionRepository actionRepository;
-    private final TransactionMapper transactionMapper = Mappers.getMapper(TransactionMapper.class);
+    private final TransactionMapper transactionMapper;
+    private final ActionMapper actionMapper;
 
-    private final ActionMapper actionMapper = Mappers.getMapper(ActionMapper.class);
-
-    public UserServiceImpl(TransactionRepository transactionRepository, UserRepository userRepository, ActionRepository actionRepository) {
+    public UserServiceImpl(TransactionRepository transactionRepository, UserRepository userRepository, ActionRepository actionRepository, TransactionMapper transactionMapper, ActionMapper actionMapper) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.actionRepository = actionRepository;
+        this.transactionMapper = transactionMapper;
+        this.actionMapper = actionMapper;
     }
 
     /**

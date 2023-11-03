@@ -2,7 +2,9 @@ package io.ylab.mapper.action;
 
 import io.ylab.dto.activity.ActivityRsDto;
 import io.ylab.model.Action;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ActionMapperImpl implements ActionMapper{
     @Override
     public ActivityRsDto toDtoRs(Action action) {

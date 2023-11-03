@@ -22,7 +22,7 @@ import java.util.Properties;
 @EnableAspectJAutoProxy
 public class WalletConfig {
     @Bean
-    DataSource dataSource(){
+    DataSource dataSource() {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
         try {
             dataSource.setDriverClass("org.postgresql.Driver");
@@ -34,29 +34,33 @@ public class WalletConfig {
         }
         return dataSource;
     }
+
     @Bean
-    LocalSessionFactoryBean sessionFactory(){
+    LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(dataSource());
         sessionFactoryBean.setPackagesToScan("io.ylab");
         Properties hibernateProperties = new Properties();
-        hibernateProperties.setProperty("hibernate.dialect","org.hibernate.dialect.PostgreSQL95Dialect");
-        hibernateProperties.setProperty("hibernate.show_sql","true");
+        hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL95Dialect");
+        hibernateProperties.setProperty("hibernate.show_sql", "true");
         sessionFactoryBean.setHibernateProperties(hibernateProperties);
         return sessionFactoryBean;
     }
+
     @Bean
-    HibernateTransactionManager transactionManager(){
+    HibernateTransactionManager transactionManager() {
         HibernateTransactionManager hibernateTransactionManager = new HibernateTransactionManager();
         hibernateTransactionManager.setSessionFactory(sessionFactory().getObject());
         return hibernateTransactionManager;
     }
+
     @Bean
     public YamlPropertiesFactoryBean yamlProperties() {
         YamlPropertiesFactoryBean factoryBean = new YamlPropertiesFactoryBean();
         factoryBean.setResources(new ClassPathResource("application.yml"));
         return factoryBean;
     }
+
     @Bean
     public SpringLiquibase liquibase(DataSource dataSource) {
         SpringLiquibase liquibase = new SpringLiquibase();

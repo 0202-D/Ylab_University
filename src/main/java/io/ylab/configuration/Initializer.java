@@ -20,4 +20,3 @@ public class Initializer extends AbstractAnnotationConfigDispatcherServletInitia
     }
 }
 
-

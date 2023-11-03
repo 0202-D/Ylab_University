@@ -1,8 +1,5 @@
 package io.ylab.exception;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -55,22 +52,6 @@ public class GlobalExceptionHandler {
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
             errorMessage.append(fieldError.getField()).append(": ").append(fieldError.getDefaultMessage()).append("; ");
         }
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage.toString());
-    }
-
-
-    public record ValidationErrorResponse(List<Violation> violations) {
-    }
-
-    public record Violation(String fieldName, String message) {
-    }
-
-    @Getter
-    @Setter
-    @Builder
-    private static class ErrorResponse {
-        private ErrorCodes code;
-        private String message;
     }
 }

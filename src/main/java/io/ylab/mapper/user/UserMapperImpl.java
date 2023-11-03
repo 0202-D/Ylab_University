@@ -3,7 +3,9 @@ package io.ylab.mapper.user;
 import io.ylab.dto.user.UserRqDto;
 import io.ylab.dto.user.UserDtoRs;
 import io.ylab.model.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserMapperImpl implements UserMapper {
     @Override
     public UserDtoRs toDtoRs(User user) {
