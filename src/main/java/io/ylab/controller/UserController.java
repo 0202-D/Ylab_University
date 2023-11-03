@@ -6,32 +6,41 @@ import io.ylab.dto.transaction.TransactionHistoryRsDto;
 import io.ylab.dto.transaction.UserBalanceRsDto;
 import io.ylab.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
 @RequiredArgsConstructor
 public class UserController {
-    public static final String APPLICATION_JSON = "application/json";
     private final UserService userService;
 
-
-    public UserBalanceRsDto balance(long userid) {
+    @GetMapping("/balance/{userId}")
+    public UserBalanceRsDto balance(@PathVariable("userId") long userid) {
         return userService.balance(userid);
     }
 
-    public boolean debit(CreditAndDebitRqDto debitRq) {
-        return userService.debit(debitRq.getSum(), debitRq.getUserId());
+    @PostMapping("/debit")
+    public ResponseEntity debit(@RequestBody CreditAndDebitRqDto debitRq) {
+        userService.debit(debitRq.getSum(), debitRq.getUserId());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public boolean credit(CreditAndDebitRqDto creditAndDebitRqDto) {
-        return userService.credit(creditAndDebitRqDto.getSum(), creditAndDebitRqDto.getUserId());
+    @PostMapping("/credit")
+    public ResponseEntity credit(@RequestBody CreditAndDebitRqDto creditAndDebitRqDto) {
+        userService.credit(creditAndDebitRqDto.getSum(), creditAndDebitRqDto.getUserId());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public List<TransactionHistoryRsDto> history(long userId) {
+    @GetMapping("/history/{userId}")
+    public List<TransactionHistoryRsDto> history(@PathVariable("userId") long userId) {
         return userService.history(userId);
     }
 
-    public List<ActivityRsDto> activity(Long userId) {
+    @GetMapping("/activity/{userId}")
+    public List<ActivityRsDto> activity(@PathVariable("userId") Long userId) {
         return userService.activity(userId);
     }
 }

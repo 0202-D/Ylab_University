@@ -3,6 +3,7 @@ package io.ylab.dao.user;
 import io.ylab.exception.NotFoundException;
 import io.ylab.model.User;
 import io.ylab.utils.HikariCPDataSource;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -10,7 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
-
+@Repository
 public class JdbcUserRepository implements UserRepository {
     private static final String INSERT_QUERY = "INSERT INTO domain.user (user_name,password,balance) VALUES(?, ?, ?)";
     private static final String GET_BY_NAME_QUERY = "SELECT u.* from domain.user u where u.user_name = ?";

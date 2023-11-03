@@ -1,7 +1,10 @@
 package io.ylab.exception;
 
-public class NotFoundException extends RuntimeException{
-    public NotFoundException(String message) {
+import org.springframework.lang.Nullable;
+
+public class NotFoundException extends IllegalArgumentException {
+
+    public NotFoundException(@Nullable String message) {
         super(message);
     }
 }

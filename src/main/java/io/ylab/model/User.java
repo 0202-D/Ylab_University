@@ -3,6 +3,7 @@ package io.ylab.model;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Data
@@ -13,10 +14,14 @@ import java.math.BigDecimal;
 /**
  * Класс, представляющий пользователя системы.
  */
+@Entity
+@Table(name = "user")
 public class User {
     /**
      * Идентификатор пользователя
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     long userId;
     /**
      * Имя пользователя

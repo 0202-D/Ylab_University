@@ -1,12 +1,12 @@
 package io.ylab.dao.transaction;
 
-import io.ylab.dao.user.JdbcUserRepository;
 import io.ylab.dao.user.UserRepository;
 import io.ylab.exception.NotFoundException;
 import io.ylab.model.Transaction;
 import io.ylab.model.TransactionalType;
 import io.ylab.model.User;
 import io.ylab.utils.HikariCPDataSource;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@Repository
 public class JdbcTransactionRepository implements TransactionRepository {
     private static final String INSERT_QUERY = "INSERT INTO domain.transaction (transactional_type,sum,user_id) VALUES(?, ?,?)";
     private static final String GET_QUERY = "SELECT t.transaction_id,t.transactional_type, t.sum, t.user_id " +
@@ -23,7 +23,11 @@ public class JdbcTransactionRepository implements TransactionRepository {
             "JOIN domain.user u ON t.user_id = u.user_id " +
             "WHERE u.user_name = ?";
     private static final String GET_BY_ID_QUERY = "Select * from domain.transaction where transaction_id = ?";
-    private final UserRepository userRepository = new JdbcUserRepository();
+    private final UserRepository userRepository;
+
+    public JdbcTransactionRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
 
     @Override
