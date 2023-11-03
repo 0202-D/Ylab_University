@@ -1,5 +1,6 @@
 package io.ylab.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.ylab.dto.activity.ActivityRsDto;
 import io.ylab.dto.transaction.CreditAndDebitRqDto;
 import io.ylab.dto.transaction.TransactionHistoryRsDto;
@@ -11,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Tag(name = "Пользовательские операции")
 @RestController
 @RequiredArgsConstructor
 public class UserController {

@@ -1,16 +1,18 @@
 package io.ylab.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.ylab.dto.user.UserDtoRs;
 import io.ylab.dto.user.UserRqDto;
 import io.ylab.mapper.user.UserMapper;
 import io.ylab.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 
+@Tag(name = "Регистрация и аутентификация")
 @RestController
 @RequiredArgsConstructor
 public class AuthController {

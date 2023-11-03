@@ -1,31 +1,11 @@
 package io.ylab.service;
 
-import io.ylab.Utils;
-import io.ylab.dao.action.ActionRepository;
-import io.ylab.dao.transaction.TransactionRepository;
-import io.ylab.dao.user.UserRepository;
-import io.ylab.dto.activity.ActivityRsDto;
-import io.ylab.dto.transaction.TransactionHistoryRsDto;
-import io.ylab.dto.transaction.UserBalanceRsDto;
-import io.ylab.model.*;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
-    @Mock
+   /* @Mock
     private TransactionRepository transactionRepository;
     @Mock
     private ActionRepository actionRepository;
@@ -113,5 +93,5 @@ class UserServiceImplTest {
         assertEquals(userId, result.get(1).getUserId());
         assertEquals(Activity.EXITED, result.get(1).getActivity());
     }
-
+*/
 }

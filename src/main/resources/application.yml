@@ -1,14 +1,28 @@
 server:
   port: 8080
 spring:
-  liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/db.changelog.changelog.xml
-    default-schema: public
-    user: postgres
-    password: postgres
-    url: jdbc:postgresql://localhost:5432/wallet
+    datasource:
+      url: jdbc:postgresql://database:5432/wallet
+      username: postgres
+      password: postgres
+    liquibase:
+     enabled: true
+     change-log: classpath:db/changelog/changelog.xml
+     default-schema: public
+     user: postgres
+     password: postgres
+     url: jdbc:postgresql://localhost:5432/wallet
 logging:
   level:
-    io.ylab: INFO
+    ru.iteco.fmh: DEBUG
+
+springdoc:
+  swagger-ui:
+    tagsSorter: alpha
+    operations-sorter: method
+
+swagger:
+  info:
+    title: "API Wallet"
+    description: "Backend сервис для приложения «Wallet»"
 

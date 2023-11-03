@@ -1,12 +1,13 @@
 package io.ylab.dto.user;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
@@ -15,6 +16,7 @@ import javax.validation.constraints.Size;
 /**
  * dto запроса на регистрацию и аутентификацию пользователя
  */
+@Schema(description = "Основная информация по юзеру для регистрации и аутентификации")
 public class UserRqDto {
     /**
      * имя пользователя

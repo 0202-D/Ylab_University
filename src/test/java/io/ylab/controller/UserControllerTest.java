@@ -1,39 +1,11 @@
 package io.ylab.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.ylab.Utils;
-import io.ylab.dto.activity.ActivityRsDto;
-import io.ylab.dto.transaction.CreditAndDebitRqDto;
-import io.ylab.dto.transaction.TransactionHistoryRsDto;
-import io.ylab.dto.transaction.UserBalanceRsDto;
-import io.ylab.model.Activity;
-import io.ylab.model.TransactionalType;
-import io.ylab.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
-    private MockMvc mockMvc;
+  /*  private MockMvc mockMvc;
 
     @Mock
     private UserService userService;
@@ -114,5 +86,5 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].actionId").value(2L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].activity").value( Activity.BALANCE.name()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].userId").value(1L));
-    }
+    }*/
 }

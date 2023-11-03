@@ -11,5 +11,4 @@
 3. В корне проекта запустить контейнеры командой docker-compose up
    Пользователь по умолчанию в бд userName = user , password = user
 4. Приложение работает на порте 8080
-5. С доступными эндпоинтами и другой информации по api можно ознакомится по ссылке -http://localhost:8080/v2/api-docs
-6. Протестировать эндпоинты можно в swagger-ui - http://localhost:8080/swagger-ui/
+5. Протестировать эндпоинты можно в swagger-ui - http://localhost:8080/swagger-ui/
