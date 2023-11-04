@@ -1,6 +1,5 @@
 package io.ylab.service;
 
-import io.ylab.aop.annotation.Loggable;
 import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.user.UserRepository;
 import io.ylab.dto.user.UserRqDto;
@@ -20,6 +19,8 @@ import java.util.Optional;
 @Service
 public class AuthServiceImpl implements AuthService {
     private static final String USER_NOT_FOUND = "Такого ползователя не существует";
+
+    private static final String USER_EXISTS = "Такой пользователь уже существует";
     private final UserRepository userRepository;
     private final ActionRepository actionRepository;
 
@@ -37,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
     public User addUser(UserRqDto user) {
         Optional<User> findUser = userRepository.getByName(user.getUserName());
         if (findUser.isPresent()) {
-            throw new IncorrectDataException(USER_NOT_FOUND);
+            throw new IncorrectDataException(USER_EXISTS);
         }
         User newUser = User.builder()
                 .userName(user.getUserName())
@@ -52,13 +53,11 @@ public class AuthServiceImpl implements AuthService {
         return newUser;
     }
 
-
     /**
      * Метод для аутентификации пользователя.
      *
      * @return объект User, если пользователь успешно аутентифицирован
      */
-    @Loggable
     public User authenticateUser(UserRqDto user) {
         User findUser = userRepository.getByName(user.getUserName())
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));

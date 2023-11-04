@@ -1,4 +1,4 @@
-package io.ylab.aop.aspect;
+package io.ylab.auditaspectstarter.aop.aspect;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class LoggableAspect {
     private static final Logger logger = LogManager.getLogger(LoggableAspect.class);
 
-    @Pointcut("@annotation(io.ylab.aop.annotation.Loggable) && execution(* *(..))")
+    @Pointcut("@annotation(io.ylab.auditaspectstarter.aop.annotation.Loggable) && execution(* *(..))")
     public void annotatedByLoggable() {
     }
 

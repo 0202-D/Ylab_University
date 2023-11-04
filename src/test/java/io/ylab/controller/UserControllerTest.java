@@ -1,11 +1,38 @@
 package io.ylab.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ylab.Utils;
+import io.ylab.dto.activity.ActivityRsDto;
+import io.ylab.dto.transaction.CreditAndDebitRqDto;
+import io.ylab.dto.transaction.TransactionHistoryRsDto;
+import io.ylab.dto.transaction.UserBalanceRsDto;
+import io.ylab.model.Activity;
+import io.ylab.model.TransactionalType;
+import io.ylab.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
-  /*  private MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Mock
     private UserService userService;
@@ -40,7 +67,7 @@ class UserControllerTest {
         );
         Mockito.when(userService.history(userId)).thenReturn(expectedResponse);
         mockMvc.perform(MockMvcRequestBuilders.get("/history/{userId}", userId))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].transactionId").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").value(userId))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].transactionalType").value(TransactionalType.CREDIT.name()))
@@ -53,7 +80,7 @@ class UserControllerTest {
     void debitTest() throws Exception {
         CreditAndDebitRqDto request = Utils.getCreditAndDebitRqDto();
         doNothing().when(userService).debit(request.getSum(), request.getUserId());
-        mockMvc.perform(post("/debit")
+        mockMvc.perform(MockMvcRequestBuilders.post("/debit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(status().isOk());
@@ -64,7 +91,7 @@ class UserControllerTest {
     void creditTest() throws Exception {
         CreditAndDebitRqDto request = Utils.getCreditAndDebitRqDto();
         doNothing().when(userService).credit(request.getSum(), request.getUserId());
-        mockMvc.perform(post("/credit")
+        mockMvc.perform(MockMvcRequestBuilders.post("/credit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(status().isOk());
@@ -79,12 +106,12 @@ class UserControllerTest {
         Mockito.when(userService.activity(userId)).thenReturn(responseDtoList);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/activity/{userId}", userId))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].actionId").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].activity").value(Activity.HISTORY.name()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].actionId").value(2L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].activity").value( Activity.BALANCE.name()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].userId").value(1L));
-    }*/
+    }
 }
