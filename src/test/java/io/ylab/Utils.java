@@ -9,7 +9,6 @@ import io.ylab.dto.user.UserRqDto;
 import io.ylab.model.*;
 
 import java.math.BigDecimal;
-import java.util.Random;
 
 public class Utils {
     public static User getUser() {
@@ -19,21 +18,6 @@ public class Utils {
                 .password("password")
                 .balance(new BigDecimal(100))
                 .build();
-    }
-
-    public static String getAlphabeticString() {
-        return getAlphabeticString(10);
-    }
-
-    public static String getAlphabeticString(int targetStringLength) {
-        int leftLimit = 97; // letter 'a'
-        int rightLimit = 122; // letter 'z'
-        Random random = new Random();
-
-        return random.ints(leftLimit, rightLimit + 1)
-                .limit(targetStringLength)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
     }
 
     public static UserRqDto getUserRqDto() {
@@ -82,14 +66,16 @@ public class Utils {
                 .userId(1)
                 .build();
     }
-    public static ActivityRsDto getActivityRsDto(){
+
+    public static ActivityRsDto getActivityRsDto() {
         return ActivityRsDto.builder()
                 .userId(1L)
                 .activity(Activity.HISTORY)
                 .actionId(1L)
                 .build();
     }
-    public static ActivityRsDto getSecondActivityRsDto(){
+
+    public static ActivityRsDto getSecondActivityRsDto() {
         return ActivityRsDto.builder()
                 .userId(1L)
                 .activity(Activity.BALANCE)

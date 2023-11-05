@@ -19,7 +19,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
- class TestContainersUserRepository {
+ class TestContainersUserRepositoryTest {
         private final static String CREATE_SCHEMA_IF_NOT_EXISTS_DOMAIN = "CREATE SCHEMA IF NOT EXISTS domain";
         private final static String CREATE_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS domain.user" +
                 " (user_id SERIAL PRIMARY KEY, user_name VARCHAR(255),password varchar(255),balance decimal)";

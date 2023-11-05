@@ -22,8 +22,9 @@ import java.math.BigDecimal;
 @Aspect
 public class AuditAspect {
     private static final String USER_NOT_FOUND = "Пользователь не найден";
-    private final ActionRepository actionRepository;
+
     private final UserRepository userRepository;
+    private final ActionRepository actionRepository;
 
     @Autowired
     public AuditAspect(ActionRepository actionRepository, UserRepository userRepository) {
