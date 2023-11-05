@@ -1,5 +1,6 @@
 package io.ylab.service;
 
+import io.ylab.loggableaspectstarter.aop.annotation.Loggable;
 import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.user.UserRepository;
 import io.ylab.dto.user.UserRqDto;
@@ -34,7 +35,6 @@ public class AuthServiceImpl implements AuthService {
      *
      * @return объект User, если пользователь успешно аутентифицирован
      */
-
     public User addUser(UserRqDto user) {
         Optional<User> findUser = userRepository.getByName(user.getUserName());
         if (findUser.isPresent()) {
@@ -58,6 +58,7 @@ public class AuthServiceImpl implements AuthService {
      *
      * @return объект User, если пользователь успешно аутентифицирован
      */
+    @Loggable
     public User authenticateUser(UserRqDto user) {
         User findUser = userRepository.getByName(user.getUserName())
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));

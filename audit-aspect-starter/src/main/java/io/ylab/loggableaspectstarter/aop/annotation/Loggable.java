@@ -1,4 +1,4 @@
-package io.ylab.auditaspectstarter.aop.annotation;
+package io.ylab.loggableaspectstarter.aop.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

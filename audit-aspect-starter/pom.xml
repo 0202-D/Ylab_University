@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.ylab</groupId>
-    <artifactId>audit-aspect-starter</artifactId>
+    <artifactId>loggable-aspect-starter</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>audit-aspect-starter</name>
-    <description>audit-aspect-starter</description>
+    <name>loggable-aspect-starter</name>
+    <description>loggable-aspect-starter</description>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -24,12 +24,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.ylab</groupId>
-            <artifactId>Ylab_University</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
 
     </dependencies>
