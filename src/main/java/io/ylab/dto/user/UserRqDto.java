@@ -21,11 +21,13 @@ public class UserRqDto {
     /**
      * имя пользователя
      */
+    @Schema(name = "userName",description = "Имя пользователя")
     @Size(min=2,message = "Имя должно быть больше двух символов")
     private String userName;
     /**
      * пароль пользователя
      */
+    @Schema(name = "password",description = "Пароль пользователя")
     @NotBlank
     private String password;
 }
