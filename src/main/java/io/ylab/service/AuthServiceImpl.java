@@ -1,11 +1,11 @@
 package io.ylab.service;
 
-import io.ylab.loggableaspectstarter.aop.annotation.Loggable;
 import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.user.UserRepository;
 import io.ylab.dto.user.UserRqDto;
 import io.ylab.exception.IncorrectDataException;
 import io.ylab.exception.NotFoundException;
+import io.ylab.loggableaspectstarter.aop.annotation.Loggable;
 import io.ylab.model.Action;
 import io.ylab.model.Activity;
 import io.ylab.model.User;

@@ -4,4 +4,4 @@
 *.iws
 target/
 .mvn*
-lib
+logging-aspect-starter/lib
