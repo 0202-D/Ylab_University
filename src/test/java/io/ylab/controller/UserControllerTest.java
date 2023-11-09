@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,7 +67,7 @@ class UserControllerTest {
         );
         Mockito.when(userService.history(userId)).thenReturn(expectedResponse);
         mockMvc.perform(MockMvcRequestBuilders.get("/history/{userId}", userId))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].transactionId").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").value(userId))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].transactionalType").value(TransactionalType.CREDIT.name()))
@@ -81,7 +80,7 @@ class UserControllerTest {
     void debitTest() throws Exception {
         CreditAndDebitRqDto request = Utils.getCreditAndDebitRqDto();
         doNothing().when(userService).debit(request.getSum(), request.getUserId());
-        mockMvc.perform(post("/debit")
+        mockMvc.perform(MockMvcRequestBuilders.post("/debit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(status().isOk());
@@ -92,7 +91,7 @@ class UserControllerTest {
     void creditTest() throws Exception {
         CreditAndDebitRqDto request = Utils.getCreditAndDebitRqDto();
         doNothing().when(userService).credit(request.getSum(), request.getUserId());
-        mockMvc.perform(post("/credit")
+        mockMvc.perform(MockMvcRequestBuilders.post("/credit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(status().isOk());
@@ -107,7 +106,7 @@ class UserControllerTest {
         Mockito.when(userService.activity(userId)).thenReturn(responseDtoList);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/activity/{userId}", userId))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].actionId").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].activity").value(Activity.HISTORY.name()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").value(1L))

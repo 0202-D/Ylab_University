@@ -1,11 +1,11 @@
 package io.ylab.service;
 
-import io.ylab.aop.annotation.Loggable;
 import io.ylab.dao.action.ActionRepository;
 import io.ylab.dao.user.UserRepository;
 import io.ylab.dto.user.UserRqDto;
 import io.ylab.exception.IncorrectDataException;
 import io.ylab.exception.NotFoundException;
+import io.ylab.loggableaspectstarter.aop.annotation.Loggable;
 import io.ylab.model.Action;
 import io.ylab.model.Activity;
 import io.ylab.model.User;
@@ -20,6 +20,8 @@ import java.util.Optional;
 @Service
 public class AuthServiceImpl implements AuthService {
     private static final String USER_NOT_FOUND = "Такого ползователя не существует";
+
+    private static final String USER_EXISTS = "Такой пользователь уже существует";
     private final UserRepository userRepository;
     private final ActionRepository actionRepository;
 
@@ -33,11 +35,10 @@ public class AuthServiceImpl implements AuthService {
      *
      * @return объект User, если пользователь успешно аутентифицирован
      */
-
     public User addUser(UserRqDto user) {
         Optional<User> findUser = userRepository.getByName(user.getUserName());
         if (findUser.isPresent()) {
-            throw new IncorrectDataException(USER_NOT_FOUND);
+            throw new IncorrectDataException(USER_EXISTS);
         }
         User newUser = User.builder()
                 .userName(user.getUserName())
@@ -51,7 +52,6 @@ public class AuthServiceImpl implements AuthService {
                 .build());
         return newUser;
     }
-
 
     /**
      * Метод для аутентификации пользователя.

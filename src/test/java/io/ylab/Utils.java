@@ -66,14 +66,16 @@ public class Utils {
                 .userId(1)
                 .build();
     }
-    public static ActivityRsDto getActivityRsDto(){
+
+    public static ActivityRsDto getActivityRsDto() {
         return ActivityRsDto.builder()
                 .userId(1L)
                 .activity(Activity.HISTORY)
                 .actionId(1L)
                 .build();
     }
-    public static ActivityRsDto getSecondActivityRsDto(){
+
+    public static ActivityRsDto getSecondActivityRsDto() {
         return ActivityRsDto.builder()
                 .userId(1L)
                 .activity(Activity.BALANCE)
